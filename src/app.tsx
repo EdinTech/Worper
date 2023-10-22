@@ -1,12 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import MainPage from './pages/main/_index';
-import { ConfigProvider,  } from 'antd';
+import { ConfigProvider } from 'antd';
+
+import { RouterProvider } from 'react-router-dom';
+import router from './router';
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-    <React.StrictMode>
+    <>
         <ConfigProvider theme={{ token: { colorPrimary: '#00b96b' } }}>
-            <MainPage />
+            <RouterProvider router={router} />
         </ConfigProvider>
-    </React.StrictMode>
+    </>
 );
