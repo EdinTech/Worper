@@ -11,7 +11,7 @@ export const serviceInformations: ServiceInformation[] = [
     },
     {
         id: 'sql-file-generator',
-        title: 'Sql File Generator Templates',
+        title: 'Generator Templates',
         description: 'Register and edit a Template to Generate SQL files',
         path: path.patchingTemplate,
         parentCategory: 'Sql'

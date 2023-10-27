@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import AppAlert from "../../ui/AppAlert";
 import useElectronStore from "../../util/hooks/useElectronStore";
 import { PATCHING } from "../../util/const/setting";
-import { NOT_FOUND_DEFAULT_PATH_KEY_MESSAGE } from "../../util/const/message";
+import { NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE } from "../../util/const/message";
 
 const SettingPage = () => {
 
@@ -18,10 +18,10 @@ const SettingPage = () => {
 
     useEffect(() => {
         (async () => {
-            const settingDefaultValue = await electronStore.get(PATCHING.DEFAULT_PATH_KEY);
+            const settingDefaultValue = await electronStore.get(PATCHING.WORKSPACE_PATH_KEY);
             if (!settingDefaultValue) {
-                alert(NOT_FOUND_DEFAULT_PATH_KEY_MESSAGE.title,
-                    NOT_FOUND_DEFAULT_PATH_KEY_MESSAGE.description);
+                alert(NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE.title,
+                    NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE.description);
             }
 
         })();

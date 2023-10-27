@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { Button, Descriptions, Space } from 'antd';
 import { CopyOutlined } from '@ant-design/icons';
 import useMessage from '../../../../util/hooks/useMessage';
-import type { PGSuccessSubTitleProps } from '../../../../util/interface/pages';
+import type { GenerateResultSuccessSubTitleProps } from '../../../../util/interface/pages';
 
-const PGSuccessSubTitle: React.FC<PGSuccessSubTitleProps> = ({ filePath, fileName }) => {
+const GenerateResultSuccessSubTitle: React.FC<GenerateResultSuccessSubTitleProps> = ({ filePath, fileName }) => {
 
     const { message, contextHolder } = useMessage()
 
@@ -36,4 +36,4 @@ const PGSuccessSubTitle: React.FC<PGSuccessSubTitleProps> = ({ filePath, fileNam
     </>)
 }
 
-export default PGSuccessSubTitle;
+export default GenerateResultSuccessSubTitle;

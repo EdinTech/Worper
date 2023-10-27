@@ -1,30 +1,71 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, AutoComplete } from 'antd';
-import { PBIOnChangeState } from '../../../../../util/interface/pages';
+import { PBControl } from '../../../../../util/interface/pages';
+import usePatchingSetting from '../../../../../util/hooks/usePatchingSetting';
 
-const mockVal = (str: string, repeat = 1) => ({
-  value: str.repeat(repeat),
-});
+const PBInputTableControl: React.FC<PBControl> = ({ state, onChangeState }) => {
 
-const PBInputTableControl: React.FC<{onChangeState: PBIOnChangeState}> = ({ onChangeState }) => {
-  const [options, setOptions] = useState<{ value: string }[]>([]);
+    const { useSetting } = usePatchingSetting();
 
-  const getPanelValue = (searchText: string) =>
-    !searchText ? [] : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)];
+    const [options, setOptions] = useState<{ value: string }[]>([]);
+    const [keyword, setKeyword] = useState<string>("");
+    const [value, setValue] = useState<string>("");
+    const [tableKeyPair, setTableKeyPair] = useState<{[val: string]: string}>();
 
-  return (
-    <>
-      <Form.Item label="Table Name">
-        <AutoComplete
-          options={options}
-          style={{ width: "100%" }}
-          onSelect={value => onChangeState({type: "tableName", value})}
-          onSearch={(text) => setOptions(getPanelValue(text))}
-          placeholder="input Table Name"
-        />
-      </Form.Item>
-    </>
-  );
+    useEffect(() => {
+
+        (async () => {
+            const setting = await useSetting();
+            setTableKeyPair(setting.table_name);
+        })();
+
+    }, []);
+
+    useEffect(() => {
+        setValue(state.tableName);
+    }, [state]);
+
+    useEffect(() => {
+
+        if (!keyword || !tableKeyPair || Object.keys(tableKeyPair).length === 0) {
+            return;
+        }
+
+
+        const timer = setTimeout(() => {
+            const tableList = Object.keys(tableKeyPair).filter(key => key.includes(keyword));
+            setOptions(tableList.map(key => ({ value: tableKeyPair[key] })));
+        }, 300);
+
+        return () => {
+            clearTimeout(timer);
+        }
+    }, [keyword]);
+
+    const handleChange = (value: string) => {
+        setValue(value);
+        onChangeState({ type: "tableName", value });
+    }
+
+    const onChange = (data: string) => {
+        setValue(data);
+    };
+
+    return (
+        <>
+            <Form.Item label="Table Name">
+                <AutoComplete
+                    options={options}
+                    style={{ width: "100%" }}
+                    value={value}
+                    onSelect={handleChange}
+                    onSearch={setKeyword}
+                    onChange={onChange}
+                    placeholder="input Table Name"
+                />
+            </Form.Item>
+        </>
+    );
 }
 
 export default PBInputTableControl;

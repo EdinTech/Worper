@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Button, Result, Alert } from 'antd';
 import ThrowError from './ThrowError';
-import PGSuccessSubTitle from './PGSuccessSubTitle';
+import GenerateResultSuccessSubTitle from './GenerateResultSuccessSubTitle';
+import { path } from '../../../../util/const/path';
 import type { PatchingGenerateResultPage } from '../../../../util/interface/pages';
 
 const { ErrorBoundary } = Alert;
@@ -18,12 +19,21 @@ const PatchingGenerateResultPage: React.FC = () => {
             <Result
                 status={status}
                 title={title}
-                subTitle={<PGSuccessSubTitle fileName={fileName} filePath={filePath} />}
+                subTitle={<GenerateResultSuccessSubTitle fileName={fileName} filePath={filePath} />}
                 extra={[
-                    <Button type="primary" key="console">
+                    <Button
+                        type="primary"
+                        key="console"
+                        onClick={() => navigate(path.main_window)}
+                    >
                         Go Dashboard
                     </Button>,
-                    <Button onClick={() => navigate(returnPath)}>Go Back</Button>,
+                    <Button
+                        key="return"
+                        onClick={() => navigate(returnPath)}
+                    >
+                        Go Back
+                    </Button>,
                 ]}
             />
         </>)
@@ -34,10 +44,19 @@ const PatchingGenerateResultPage: React.FC = () => {
             title={title}
             subTitle={<ErrorBoundary><ThrowError error={error} /></ErrorBoundary>}
             extra={[
-                <Button type="primary" key="console">
+                <Button
+                    type="primary"
+                    key="dashboard"
+                    onClick={() => navigate(path.main_window)}
+                >
                     Go Dashboard
                 </Button>,
-                <Button onClick={() => navigate(returnPath)}>Go Back</Button>,
+                <Button
+                    key="return"
+                    onClick={() => navigate(returnPath)}
+                >
+                    Go Back
+                </Button>,
             ]}
         />
     </>)

@@ -1,10 +1,9 @@
 import React from 'react';
-import { HomeOutlined, CodeSandboxOutlined, SettingOutlined } from '@ant-design/icons';
-import { Layout, Menu } from 'antd';
 import { useNavigate } from 'react-router-dom';
-
-import { GetItemFunction, MenuItem } from '../util/interface/ui';
-import path from '../util/const/path';
+import { Layout, Menu } from 'antd';
+import { HomeOutlined, CodeSandboxOutlined, SettingOutlined } from '@ant-design/icons';
+import { path } from '../util/const/path';
+import type { GetItemFunction, MenuItem } from '../util/interface/ui';
 
 const { Sider } = Layout;
 

@@ -22,7 +22,7 @@ const PSDefaultPAthControl: React.FC = () => {
 
     useEffect(() => {
         (async () => {
-            const settingDefaultValue = await electronStore.get(PATCHING.DEFAULT_PATH_KEY);
+            const settingDefaultValue = await electronStore.get(PATCHING.WORKSPACE_PATH_KEY);
             if (settingDefaultValue) {
                 setPath(settingDefaultValue);
                 setDisable(true);
@@ -37,42 +37,79 @@ const PSDefaultPAthControl: React.FC = () => {
             return;
         }
 
-        if (path.trim().length === 0) {
+        if (path.length === 0) {
             return;
         }
 
-        const existsDirectory = await fs.start(path);
+        // workspace directory path
+        const workspace = path;
+
+        // set workspace directory path
+        const existsDirectory = await fs.start(workspace);
         if (!existsDirectory) {
             message.error("No find Directory.")
             return;
         }
+        electronStore.set(PATCHING.WORKSPACE_PATH_KEY, workspace);
 
-        // set default template path
-        const templatesPath = path + '/' + PATCHING.DEFAULT_TEMPLATE_DIRECTORY_NAME;
-        const existsTemplatesPath = await fs.start(templatesPath);
-        if (!existsTemplatesPath) {
-            await fs.mkdir(templatesPath);
-        }
-        electronStore.set(PATCHING.DEFAULT_TEMPLATE_PATH_KEY, templatesPath);
-
-        // set default output path
-        const outputPath = path + '/' + PATCHING.DEFAULT_OUTPUT_DIRECTORY_NAME;
+        // set default output directory path
+        const outputPath = workspace + '/' + PATCHING.OUTPUT_DIRECTORY_NAME;
         const existsOutputPath = await fs.start(outputPath);
         if (!existsOutputPath) {
             await fs.mkdir(outputPath);
         }
-        electronStore.set(PATCHING.DEFAULT_OUTPUT_PATH_KEY, outputPath);
+        electronStore.set(PATCHING.DEFAULT_OUTPUT_DIRECTORY_PATH_KEY, outputPath);
 
-        // set default setting path
-        const settingPath = path + '/' + PATCHING.DEFAULT_SETTING_DIRECTORY_NAME;
+        // set setting directory path
+        const settingPath = workspace + '/' + PATCHING.SETTING_DIRECTORY_NAME;
         const existsSettingPath = await fs.start(settingPath);
         if (!existsSettingPath) {
             await fs.mkdir(settingPath);
         }
-        electronStore.set(PATCHING.DEFAULT_SETTING_PATH_KEY, settingPath);
+        electronStore.set(PATCHING.SETTING_DIRECTORY_PATH_KEY, settingPath);
 
-        // set default path
-        electronStore.set(PATCHING.DEFAULT_PATH_KEY, path);
+        // set setting file
+        // directory_path/setting/setting.json
+        const initialSettingFile = settingPath + '/' + PATCHING.SETTING_FILE_NAME;
+        const existsInitialSettingFile = await fs.start(initialSettingFile);
+        if (!existsInitialSettingFile) {
+            await fs.writeFile(initialSettingFile, JSON.stringify(PATCHING.INITIAL_SETTING_FILE_CONTENT, null, 2));
+        }
+        electronStore.set(PATCHING.SETTING_FILE_PATH_KEY, initialSettingFile);
+
+        // set template directory path
+        const templatesPath = workspace + '/' + PATCHING.TEMPLATE_DIRECTORY_NAME;
+        const existsTemplatesPath = await fs.start(templatesPath);
+        if (!existsTemplatesPath) {
+            await fs.mkdir(templatesPath);
+        }
+        electronStore.set(PATCHING.TEMPLATE_DIRECTORY_PATH_KEY, templatesPath);
+
+        // set example template file
+        // directory_path/templates/ex1.json
+        const exampleTemplateFilePath = templatesPath + '/' + PATCHING.EXAMPLE_TEMPLATE_FILE_NAME;
+        const existsExampleTemplateFile = await fs.start(exampleTemplateFilePath);
+        if (!existsExampleTemplateFile) {
+            await fs.writeFile(exampleTemplateFilePath, JSON.stringify(PATCHING.INITIAL_EXAMPLE_TEMPLATE_FILE_CONTENT, null, 2));
+        }
+
+        // set template index file
+        // directory_path/templates/template_index.json
+        const templateIndexFilePath = templatesPath + '/' + PATCHING.TEMPLATE_INDEX_FILE_NAME;
+        const existsTemplateIndexFile = await fs.start(templateIndexFilePath);
+        if (!existsTemplateIndexFile) {
+            await fs.writeFile(templateIndexFilePath, JSON.stringify(PATCHING.INITIAL_TEMPLATE_INDEX_FILE_CONTENT, null, 2));
+        }
+        electronStore.set(PATCHING.TEMPLATE_INDEX_FILE_PATH_KEY, templateIndexFilePath);
+
+        // set template list file
+        // directory_path/templates/template_list.json
+        const templateListFilePath = templatesPath + '/' + PATCHING.TEMPLATE_LIST_FILE_NAME;
+        const existsTemplateListFile = await fs.start(templateListFilePath);
+        if (!existsTemplateListFile) {
+            await fs.writeFile(templateListFilePath, JSON.stringify(PATCHING.INITIAL_TEMPLATE_LIST_FILE_CONTENT, null, 2));
+        }
+        electronStore.set(PATCHING.TEMPLATE_LIST_FILE_PATH_KEY, templateListFilePath);
 
         message.success("Directory saved.");
         setDisable((prevState) => !prevState);
@@ -86,12 +123,12 @@ const PSDefaultPAthControl: React.FC = () => {
                 style={{ maxWidth: 500 }}
                 validateMessages={validateMessages}
             >
-                <Form.Item name={['path']} label="Default path" rules={[{ required: true }]}>
+                <Form.Item name={['path']} label="Workspace path" rules={[{ required: true }]}>
                     <Space direction="horizontal" style={{ width: '100%' }}>
                         <Input
                             style={{ minWidth: 400 }}
                             disabled={disable}
-                            onInput={(e) => setPath(e.currentTarget.value)}
+                            onInput={(e) => setPath(e.currentTarget.value.trim())}
                             value={path}
                         />
                         {isLoading && <Button style={{ width: 80 }} loading></Button>}

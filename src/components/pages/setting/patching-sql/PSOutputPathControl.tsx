@@ -22,7 +22,7 @@ const PSOutputPathControl: React.FC = () => {
     useEffect(() => {
 
         (async () => {
-            const settingOutputPath = await electronStore.get(PATCHING.OUTPUT_PATH_KEY);
+            const settingOutputPath = await electronStore.get(PATCHING.OUTPUT_DIRECTORY_PATH_KEY);
             if (settingOutputPath) {
                 setPath(settingOutputPath);
                 setDisable(true);
@@ -39,7 +39,7 @@ const PSOutputPathControl: React.FC = () => {
         }
 
         if (path.trim().length === 0) {
-            electronStore.delete(PATCHING.OUTPUT_PATH_KEY);
+            electronStore.delete(PATCHING.OUTPUT_DIRECTORY_PATH_KEY);
             setPath(path);
             message.success("Directory deleted.");
             return;
@@ -51,7 +51,7 @@ const PSOutputPathControl: React.FC = () => {
             message.error("No find Directory.")
             return;
         }
-        electronStore.set(PATCHING.OUTPUT_PATH_KEY, path);
+        electronStore.set(PATCHING.OUTPUT_DIRECTORY_PATH_KEY, path);
 
         setPath(path);
         setDisable(true);

@@ -1,49 +1,50 @@
 import React, { useEffect, useState } from 'react';
 import { Form, AutoComplete } from 'antd';
-import { PBControl } from '../../../../../util/interface/pages';
+import { TemplateModifyControl } from '../../../../../util/interface/pages';
 import usePatchingSetting from '../../../../../util/hooks/usePatchingSetting';
 
-const PBInputActionControl: React.FC<PBControl> = ({ state, onChangeState }) => {
+const PBInputTableControl: React.FC<TemplateModifyControl> = ({ template, onChangeState }) => {
 
     const { useSetting } = usePatchingSetting();
 
     const [options, setOptions] = useState<{ value: string }[]>([]);
     const [keyword, setKeyword] = useState<string>("");
     const [value, setValue] = useState<string>("");
-    const [actions, setActions] = useState<string[]>();
+    const [tableKeyPair, setTableKeyPair] = useState<{[val: string]: string}>();
 
     useEffect(() => {
 
         (async () => {
             const setting = await useSetting();
-            setActions(setting.action);
+            setTableKeyPair(setting.table_name);
         })();
 
     }, []);
 
     useEffect(() => {
-        setValue(state.action);
-    }, [state]);
+        setValue(template.tableName);
+    }, [template]);
 
     useEffect(() => {
 
-        if (!keyword || !actions || actions.length === 0) {
+        if (!keyword || !tableKeyPair || Object.keys(tableKeyPair).length === 0) {
             return;
         }
 
+
         const timer = setTimeout(() => {
-            const filteredActions = actions.filter(action => action.includes(keyword));
-            setOptions(filteredActions.map(action => ({ value: action })));
+            const tableList = Object.keys(tableKeyPair).filter(key => key.includes(keyword));
+            setOptions(tableList.map(key => ({ value: tableKeyPair[key] })));
         }, 300);
 
         return () => {
             clearTimeout(timer);
         }
-    }, [value]);
+    }, [keyword]);
 
     const handleChange = (value: string) => {
         setValue(value);
-        onChangeState({ type: "action", value });
+        onChangeState({ type: "tableName", value });
     }
 
     const onChange = (data: string) => {
@@ -52,7 +53,7 @@ const PBInputActionControl: React.FC<PBControl> = ({ state, onChangeState }) => 
 
     return (
         <>
-            <Form.Item label="Action">
+            <Form.Item label="Table Name">
                 <AutoComplete
                     options={options}
                     style={{ width: "100%" }}
@@ -60,11 +61,11 @@ const PBInputActionControl: React.FC<PBControl> = ({ state, onChangeState }) => 
                     onSelect={handleChange}
                     onSearch={setKeyword}
                     onChange={onChange}
-                    placeholder="input Action"
+                    placeholder="input Table Name"
                 />
             </Form.Item>
         </>
     );
 }
 
-export default PBInputActionControl;
+export default PBInputTableControl;

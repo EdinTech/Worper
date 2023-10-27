@@ -13,15 +13,15 @@ import useElectronStore from '../../../../util/hooks/useElectronStore';
 import useFileSystem from '../../../../util/hooks/useFileSystem';
 import { path } from '../../../../util/const/path';
 import { PATCHING } from '../../../../util/const/setting';
-import { NOT_FOUND_DEFAULT_PATH_KEY_MESSAGE } from '../../../../util/const/message';
+import { NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE } from '../../../../util/const/message';
 import type { PatchingFile, } from '../../../../util/interface/pages';
 
 const patchingFileInitialState: PatchingFile = {
     id: 0,
     applyingDate: dayjs().format('YYYYMMDD'),
-    applier: '情シス開発保守運用2',
+    applier: '',
     checkingDate: dayjs().format('YYYYMMDD'),
-    checker: '小林',
+    checker: '',
     tableName: '',
     action: '',
     sql: '',
@@ -32,7 +32,6 @@ const patchingFileInitialState: PatchingFile = {
 const PatchingGeneratePage: React.FC = () => {
 
     const [state, setState] = useState<PatchingFile>(patchingFileInitialState);
-    const [templates, setTemplates] = useState([]);
     const [outputPath, setOutputPath] = useState(null);
     const [messages, setMessages] = useState([]);
     const navigate = useNavigate();
@@ -43,40 +42,26 @@ const PatchingGeneratePage: React.FC = () => {
     useEffect(() => {
         (async () => {
 
-            // Get template default path and Set
-            let templatePath: string;
-            const defaultTemplatePath = await electronStore.get(PATCHING.DEFAULT_TEMPLATE_PATH_KEY);
-            if (!defaultTemplatePath) {
-                setMessages([NOT_FOUND_DEFAULT_PATH_KEY_MESSAGE.title,
-                NOT_FOUND_DEFAULT_PATH_KEY_MESSAGE.description]);
+            // Get template directory path and Set
+            const templatePath = await electronStore.get(PATCHING.TEMPLATE_DIRECTORY_PATH_KEY);
+            if (!templatePath) {
+                setMessages([[NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE.title,
+                NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE.description]]);
                 return;
-            }
-            templatePath = defaultTemplatePath as string;
-
-            // If exists custom template path, then get and set.
-            const customTemplatePath = await electronStore.get(PATCHING.TEMPLATE_PATH_KEY);
-            if (customTemplatePath) {
-                templatePath = customTemplatePath as string;
-            }
-
-            // Get template list
-            const templates = await fs.readdir(templatePath);
-            if (templates) {
-                setTemplates(templates);
             }
 
             // Get output default path and Set
             let outputPath: string;
-            const defaultOutputPath = await electronStore.get(PATCHING.DEFAULT_OUTPUT_PATH_KEY);
+            const defaultOutputPath = await electronStore.get(PATCHING.DEFAULT_OUTPUT_DIRECTORY_PATH_KEY);
             if (!defaultOutputPath) {
-                setMessages([NOT_FOUND_DEFAULT_PATH_KEY_MESSAGE.title,
-                NOT_FOUND_DEFAULT_PATH_KEY_MESSAGE.description]);
+                setMessages([NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE.title,
+                NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE.description]);
                 return;
             }
             outputPath = defaultOutputPath as string;
 
             // If exists custom output path, then get and set.
-            const customOutputPath = await electronStore.get(PATCHING.OUTPUT_PATH_KEY);
+            const customOutputPath = await electronStore.get(PATCHING.OUTPUT_DIRECTORY_PATH_KEY);
             if (customOutputPath) {
                 outputPath = customOutputPath as string;
             }
@@ -87,7 +72,17 @@ const PatchingGeneratePage: React.FC = () => {
 
     const onGenerateHandler = async () => {
         const { fullFileName, fullFilePath } = await getFullPath();
-        const content = state.description + '\n\n' + state.sql
+
+        // description
+        const modifiedDescription = state.description
+                .split('\n')
+                .map(line => `--${line}`)
+                .join('\n');
+
+        // description + sql
+        const content = modifiedDescription + '\n\n' + state.sql
+
+        // create file
         const result = await fs.writeFile(fullFilePath, content);
         if (result) {
             navigate(path.patchingGenerateResult, {
@@ -148,16 +143,17 @@ const PatchingGeneratePage: React.FC = () => {
         <>
             <AppPageTitle>Generate Sql File</AppPageTitle>
 
+            {/* alert component */}
             <AppAlert
                 messages={messages}
                 type="warning"
                 closable={true}
                 showIcon={true}
-                action={<Link to={path.searching}>go setting</Link>}
+                action={<Link to={path.setting}>go setting</Link>}
             />
 
             {/* template component */}
-            <PatchingTemplate />
+            <PatchingTemplate setState={setState} />
 
             {/* basic Information component */}
             <PatchingBasicInformation state={state} setState={setState} />

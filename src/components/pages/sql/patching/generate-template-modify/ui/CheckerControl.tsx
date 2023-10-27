@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import dayjs from 'dayjs';
-import { Form, Select, Space, DatePicker, Divider, Input, Button } from 'antd';
+import { Form, Select, Space, Divider, Input, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import type { InputRef } from 'antd';
-import type { PBControl } from '../../../../../util/interface/pages';
+import type { TemplateModifyControl } from '../../../../../util/interface/pages';
 import usePatchingSetting from '../../../../../util/hooks/usePatchingSetting';
 
 let index = 0;
 
-const PBCheckerControl: React.FC<PBControl> = ({ state, onChangeState }) => {
+const PBCheckerControl: React.FC<TemplateModifyControl> = ({ template, onChangeState }) => {
 
     const { useSetting } = usePatchingSetting();
 
@@ -41,17 +40,13 @@ const PBCheckerControl: React.FC<PBControl> = ({ state, onChangeState }) => {
     };
 
     return <>
-        <Form.Item label="Checking Date & Checker">
+        <Form.Item label="Checker">
             <Space>
-            <DatePicker
-                    defaultValue={dayjs(state.checkingDate, 'YYYYMMDD')}
-                    format={'YYYYMMDD'}
-                    onChange={(_, date) => onChangeState({type: 'applyingDate', value: date})} />
                 <Select
-                    defaultValue={state.checker}
+                    defaultValue={template.checker}
                     style={{ width: 300 }}
                     onChange={value => onChangeState({type: 'checker', value})}
-                    value={state.checker}
+                    value={template.checker}
                     dropdownRender={menu => (
                         <>
                             {menu}

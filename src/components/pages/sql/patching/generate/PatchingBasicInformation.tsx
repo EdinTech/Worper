@@ -36,10 +36,10 @@ const PatchingBasicInformation: React.FC<PatchingComponentProps> = ({ state, set
                     <PBCheckerControl state={state} onChangeState={onChangeState} />
 
                     {/* input table component */}
-                    <PBInputTableControl onChangeState={onChangeState} />
+                    <PBInputTableControl state={state} onChangeState={onChangeState} />
 
                     {/* input action component */}
-                    <PBInputActionControl onChangeState={onChangeState} />
+                    <PBInputActionControl state={state} onChangeState={onChangeState} />
                 </Form>
             </Card>
         </>

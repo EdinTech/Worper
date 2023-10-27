@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Form, AutoComplete } from 'antd';
-import { PBControl } from '../../../../../util/interface/pages';
+import { TemplateModifyControl } from '../../../../../util/interface/pages';
 import usePatchingSetting from '../../../../../util/hooks/usePatchingSetting';
 
-const PBInputActionControl: React.FC<PBControl> = ({ state, onChangeState }) => {
+const PBInputActionControl: React.FC<TemplateModifyControl> = ({ template, onChangeState }) => {
 
     const { useSetting } = usePatchingSetting();
 
@@ -22,8 +22,8 @@ const PBInputActionControl: React.FC<PBControl> = ({ state, onChangeState }) => 
     }, []);
 
     useEffect(() => {
-        setValue(state.action);
-    }, [state]);
+        setValue(template.action);
+    }, [template]);
 
     useEffect(() => {
 
@@ -39,7 +39,7 @@ const PBInputActionControl: React.FC<PBControl> = ({ state, onChangeState }) => 
         return () => {
             clearTimeout(timer);
         }
-    }, [value]);
+    }, [keyword]);
 
     const handleChange = (value: string) => {
         setValue(value);

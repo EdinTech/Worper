@@ -7,15 +7,16 @@ import SettingPage from './components/pages/setting';
 import ErrorPage from './components/pages/error/404';
 import { path } from './components/util/const/path';
 import PatchingGenerateResultPage from './components/pages/sql/patching/generate-result';
-import PatchingTemplateEditPage from './components/pages/sql/patching/generate-template-edit';
+import PatchingTemplateModifyPage from './components/pages/sql/patching/generate-template-modify';
 import PatchingTemplatePage from './components/pages/sql/patching/generate-template';
+import TestPage from './components/pages/test';
 
 const routes = [
-    { path: path.main, element: <PatchingTemplatePage /> },
+    { path: path.main, element: <TestPage /> },
     { path: path.patchingGenerate, element: <PatchingGeneratePage /> },
     { path: path.patchingGenerateResult, element: <PatchingGenerateResultPage /> },
     { path: path.patchingTemplate, element: <PatchingTemplatePage />},
-    { path: path.patchingTemplateEdit, element: <PatchingTemplateEditPage />},
+    { path: path.patchingTemplateModify, element: <PatchingTemplateModifyPage />},
     { path: path.patchingSetting, element: <PatchingSettingPage />},
     { path: path.setting, element: <SettingPage />},
 ];

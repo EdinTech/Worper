@@ -33,10 +33,10 @@ const AppLayoutContent: React.FC<{ collapsed: boolean, children: React.ReactNode
     return (
         <Layout style={{ marginLeft: layoutMarginLeft, transition: "all 0.2s ease 0s" }}>
             <Content style={{ margin: '16px' }}>
-                <Breadcrumb
+                {/* <Breadcrumb
                     items={getItemTitle()}
                     style={{ marginBottom: '8px' }}
-                />
+                /> */}
                 {children}
             </Content>
         </Layout>

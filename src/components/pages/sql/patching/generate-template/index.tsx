@@ -1,18 +1,16 @@
 import AppPageTitle from '../../../../ui/AppPageTitle';
-import React, { useState } from 'react';
-import { Divider, Radio, Table, Tag, Button, Dropdown, Space, Typography  } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import React, { useEffect, useState } from 'react';
+import dayjs from 'dayjs';
+import { Table } from 'antd';
+import GenerateTemplateControl from './GenerateTemplateControl';
+import useTemplate from '../../../../util/hooks/useTemplate';
+import { useNavigate } from 'react-router-dom';
+import { path } from '../../../../util/const/path';
 import type { ColumnsType } from 'antd/es/table';
-import type { MenuProps } from 'antd';
+import type { TemplateListType } from '../../../../util/interface/common';
+import useValidateSetting from '../../../../util/hooks/useValidateSetting';
 
-interface DataType {
-    key: React.Key;
-    template: string;
-    description: string;
-    tag: string[];
-}
-
-const columns: ColumnsType<DataType> = [
+const columns: ColumnsType<TemplateListType> = [
     {
         title: 'Template',
         dataIndex: 'template',
@@ -22,100 +20,84 @@ const columns: ColumnsType<DataType> = [
         dataIndex: 'description',
     },
     {
-        title: 'tag',
-        dataIndex: 'tag',
-        render: (tags: string[]) => (
-            <>
-                {tags.map((tag) => (
-                    <Tag color="blue" key={tag}>
-                        {tag}
-                    </Tag>
-                ))}
-            </>
-        )
-    },
-];
-
-const data: DataType[] = [
-    {
-        key: '1',
-        template: 'John Brown',
-        description: 'New York No. 1 Lake Park',
-        tag: ['node', 'php']
-    },
-    {
-        key: '2',
-        template: 'Jim Green',
-        description: 'London No. 1 Lake Park',
-        tag: ['node']
-    },
-    {
-        key: '3',
-        template: 'Joe Black',
-        description: 'Sydney No. 1 Lake Park',
-        tag: []
-    },
-    {
-        key: '4',
-        template: 'Disabled User',
-        description: 'Sydney No. 1 Lake Park',
-        tag: []
-    },
-];
-
-const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        title: 'Created At',
+        dataIndex: 'createdAt',
+        render: (text: string) => dayjs(text).format('YYYY-MM-DD')
     }
-};
-
-const { Text } = Typography;
-
-const items: MenuProps['items'] = [
-    {
-        key: '1',
-        label: (
-            <Text>
-                Edit
-            </Text>
-        ),
-    },
-    {
-        key: '2',
-        label: (
-            <Text type='danger'>
-                Delete
-            </Text>
-        ),
-    },
 ];
 
 const PatchingTemplatePage: React.FC = () => {
+
+    const [templates, setTemplates] = useState<TemplateListType[]>();
+    const [templateListItem, setTemplateListItem] = useState<TemplateListType>();
+    const { templateListManager, templateIndexManager, templateManager } = useTemplate();
+    const {isValidated, appAlert } = useValidateSetting();
+    const [isChecked, setIsChecked] = useState(false);
+    const navigate = useNavigate();
+
+
+    useEffect(() => {
+        templateListManager.get().then(setTemplates);
+    }, []);
+
+    const onChange = (_: React.Key[], selectedRows: TemplateListType[]) => {
+        setIsChecked(true);
+        setTemplateListItem(selectedRows[0]);
+    }
+
+    const onCreate = () => {
+        navigate(path.patchingTemplateModify, {
+            state: {
+                templateListItem: null,
+                type: 'create'
+            }
+        });
+        setIsChecked(false);
+    }
+
+    const onDelete = () => {
+        if (!templateListItem) {
+            return;
+        }
+        templateListManager.remove(templateListItem.key);
+        templateIndexManager.remove(templateListItem.template);
+        templateManager.remove(templateListItem.file);
+        const filteredTemplates = templates?.filter(template => template.key != templateListItem.key);
+        setTemplates(filteredTemplates)
+        setIsChecked(false);
+    }
+
+    const onEdit = () => {
+        if (!templateListItem) {
+            return;
+        }
+        navigate(path.patchingTemplateModify, {
+            state: {
+                templateListItem: templateListItem,
+                type: 'modify'
+            }
+        });
+        setIsChecked(false);
+    }
+
     return (
         <>
             <AppPageTitle>Sql Templates</AppPageTitle>
-            <div style={{ marginBottom: 16, textAlign: 'right' }}>
-                <Space>
-                    <Dropdown menu={{ items }} placement="bottomRight">
-                        <Button>
-                            <Space>
-                                Action
-                                <DownOutlined />
-                            </Space>
-                        </Button>
-                    </Dropdown>
-                    <Button type="primary">
-                            Register
-                    </Button>
-                </Space>
-            </div>
+            {appAlert}
+            <GenerateTemplateControl
+                isChecked={isChecked}
+                onCreate={onCreate}
+                onEdit={onEdit}
+                onDelete={onDelete}
+                isValidated={isValidated}
+            />
             <Table
                 rowSelection={{
                     type: 'radio',
-                    ...rowSelection,
+                    onChange: onChange,
                 }}
                 columns={columns}
-                dataSource={data}
+                dataSource={templates}
             />
         </>
     )

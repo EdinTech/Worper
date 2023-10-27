@@ -23,7 +23,7 @@ const PSTemplatePathControl: React.FC = () => {
     useEffect(() => {
 
         (async () => {
-            const settingTemplatePath = await electronStore.get(PATCHING.TEMPLATE_PATH_KEY);
+            const settingTemplatePath = await electronStore.get(PATCHING.TEMPLATE_DIRECTORY_PATH_KEY);
             if (settingTemplatePath) {
                 setPath(settingTemplatePath);
                 setDisable(true);
@@ -40,7 +40,7 @@ const PSTemplatePathControl: React.FC = () => {
         }
 
         if (path.trim().length === 0) {
-            electronStore.delete(PATCHING.TEMPLATE_PATH_KEY);
+            electronStore.delete(PATCHING.TEMPLATE_DIRECTORY_PATH_KEY);
             setPath(path);
             message.success("Directory deleted.");
             return;
@@ -52,7 +52,7 @@ const PSTemplatePathControl: React.FC = () => {
             message.error("No find Directory.")
             return;
         }
-        electronStore.set(PATCHING.TEMPLATE_PATH_KEY, path);
+        electronStore.set(PATCHING.TEMPLATE_DIRECTORY_PATH_KEY, path);
 
         setPath(path);
         setDisable(true);

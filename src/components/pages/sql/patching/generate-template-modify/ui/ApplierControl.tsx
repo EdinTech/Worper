@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import dayjs from 'dayjs';
-import { Form, Select, Space, DatePicker, Divider, Input, Button } from 'antd';
+import { Form, Select, Space, Divider, Input, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import type { InputRef } from 'antd';
-import type { PBControl } from '../../../../../util/interface/pages';
+import type { TemplateModifyControl } from '../../../../../util/interface/pages';
 import usePatchingSetting from '../../../../../util/hooks/usePatchingSetting';
 
 let index = 0;
 
-const PBCheckerControl: React.FC<PBControl> = ({ state, onChangeState }) => {
+const PBApplierControl: React.FC<TemplateModifyControl> = ({ template, onChangeState }) => {
 
     const { useSetting } = usePatchingSetting();
 
@@ -21,11 +20,10 @@ const PBCheckerControl: React.FC<PBControl> = ({ state, onChangeState }) => {
         (async () => {
             const setting = await useSetting();
             setItems(setting.members);
-            onChangeState({ type: 'checker', value: setting.default_checker })
+            onChangeState({ type: 'applier', value: setting.default_applicant })
         })();
 
     }, []);
-
 
     const onNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setName(event.target.value);
@@ -41,17 +39,13 @@ const PBCheckerControl: React.FC<PBControl> = ({ state, onChangeState }) => {
     };
 
     return <>
-        <Form.Item label="Checking Date & Checker">
+        <Form.Item label="Applicant">
             <Space>
-            <DatePicker
-                    defaultValue={dayjs(state.checkingDate, 'YYYYMMDD')}
-                    format={'YYYYMMDD'}
-                    onChange={(_, date) => onChangeState({type: 'applyingDate', value: date})} />
                 <Select
-                    defaultValue={state.checker}
+                    defaultValue={template.applier}
                     style={{ width: 300 }}
-                    onChange={value => onChangeState({type: 'checker', value})}
-                    value={state.checker}
+                    onChange={value => onChangeState({ type: 'applier', value })}
+                    value={template.applier}
                     dropdownRender={menu => (
                         <>
                             {menu}
@@ -77,4 +71,4 @@ const PBCheckerControl: React.FC<PBControl> = ({ state, onChangeState }) => {
     </>
 }
 
-export default PBCheckerControl;
+export default PBApplierControl;
