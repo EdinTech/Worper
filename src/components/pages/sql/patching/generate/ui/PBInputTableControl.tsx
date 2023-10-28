@@ -16,6 +16,9 @@ const PBInputTableControl: React.FC<PBControl> = ({ state, onChangeState }) => {
 
         (async () => {
             const setting = await useSetting();
+            if (!setting) {
+                return;
+            }
             setTableKeyPair(setting.table_name);
         })();
 

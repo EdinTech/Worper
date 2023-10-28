@@ -20,6 +20,9 @@ const PBApplierControl: React.FC<PBControl> = ({ state, onChangeState }) => {
 
         (async () => {
             const setting = await useSetting();
+            if (!setting) {
+                return;
+            }
             setItems(setting.members);
             onChangeState({ type: 'applier', value: setting.default_applicant })
         })();

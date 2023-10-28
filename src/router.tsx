@@ -12,7 +12,7 @@ import PatchingTemplatePage from './components/pages/sql/patching/generate-templ
 import TestPage from './components/pages/test';
 
 const routes = [
-    { path: path.main, element: <TestPage /> },
+    { path: path.main, element: <MainPage /> },
     { path: path.patchingGenerate, element: <PatchingGeneratePage /> },
     { path: path.patchingGenerateResult, element: <PatchingGenerateResultPage /> },
     { path: path.patchingTemplate, element: <PatchingTemplatePage />},

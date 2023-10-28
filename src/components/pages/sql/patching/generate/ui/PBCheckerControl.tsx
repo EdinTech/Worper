@@ -20,6 +20,9 @@ const PBCheckerControl: React.FC<PBControl> = ({ state, onChangeState }) => {
 
         (async () => {
             const setting = await useSetting();
+            if (!setting) {
+                return;
+            }
             setItems(setting.members);
             onChangeState({ type: 'checker', value: setting.default_checker })
         })();

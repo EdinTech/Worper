@@ -34,7 +34,8 @@ function useServiceAccessHistory() {
         const historyObj = JSON.parse(storedHistory as string);
         const historyArray = Object.entries(historyObj) as Array<[string, string]>;
         historyArray.sort((a, b) => (b[1]).localeCompare(a[1]));
-        return historyArray.slice(0, limit);
+        const fetchCount = limit ?? 20;
+        return historyArray.slice(0, fetchCount);
     }
 
     return { history, setStoreHistory, getStoreHistoryOrderBy } as const;

@@ -10,7 +10,7 @@ export const serviceInformations: ServiceInformation[] = [
         parentCategory: 'Sql'
     },
     {
-        id: 'sql-file-generator',
+        id: 'sql-file-generator-templates',
         title: 'Generator Templates',
         description: 'Register and edit a Template to Generate SQL files',
         path: path.patchingTemplate,

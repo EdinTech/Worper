@@ -168,7 +168,7 @@ const PatchingGeneratePage: React.FC = () => {
             <PatchingFileInfo outputPath={outputPath} state={state} />
 
             {/* control component */}
-            <PatchingControl onGenerate={onGenerateHandler} isLoading={isLoading} />
+            <PatchingControl onGenerate={onGenerateHandler} isLoading={isLoading} disabled={!outputPath} />
         </>
     );
 }

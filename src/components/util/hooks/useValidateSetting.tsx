@@ -12,6 +12,7 @@ const useValidateSetting = () => {
     const { templateSettingManager } = useTemplate();
 
     useEffect(() => {
+        const settingPath = path.setting;
         (async () => {
             const path = await templateSettingManager.getWorkspacePath();
             path ? setIsValidated(true) : setAppAlert(<AppAlert
@@ -19,7 +20,7 @@ const useValidateSetting = () => {
                 type="warning"
                 closable={true}
                 showIcon={true}
-                action={<Link to={path.setting}>go setting</Link>}
+                action={<Link to={settingPath}>go setting</Link>}
             />);
         })();
     }, []);

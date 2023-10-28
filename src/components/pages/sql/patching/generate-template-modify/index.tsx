@@ -45,14 +45,13 @@ const PatchingTemplateModifyPage: React.FC = () => {
     const pageTitle = type === 'modify' ? 'Modify Template' : 'Create Template';
     useEffect(() => {
 
-        if (type === 'modify') {
-            setTemplateListItem(locatedTemplateListItem);
+        if (type !== 'modify') {
+            return;
         }
+        setTemplateListItem(locatedTemplateListItem);
 
         (async () => {
-            if (type === 'modify') {
-                setTemplate(await templateManager.get(locatedTemplateListItem.file));
-            }
+            setTemplate(await templateManager.get(locatedTemplateListItem.file));
         })();
     }, []);
 

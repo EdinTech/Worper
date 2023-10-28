@@ -16,6 +16,9 @@ const PBInputActionControl: React.FC<PBControl> = ({ state, onChangeState }) => 
 
         (async () => {
             const setting = await useSetting();
+            if (!setting) {
+                return;
+            }
             setActions(setting.action);
         })();
 
