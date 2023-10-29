@@ -71,7 +71,7 @@ export interface TemplateListColumnType {
     createdAt: string;
 }
 
-export interface GenerateTemplateControlProps {
+export interface TemplateControlProps {
     isChecked: boolean;
     isValidated: boolean;
     onCreate: () => void;
@@ -113,4 +113,10 @@ export interface TemplateModifyControl {
 
 export interface interfaceUseServiceAccessHistoryProps {
     log: boolean;
+}
+
+export interface OutputFilesTemplateControlProps {
+    onDelete: () => void;
+    isChecked: boolean;
+    isValidated: boolean;
 }

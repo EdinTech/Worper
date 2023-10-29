@@ -10,15 +10,18 @@ import PatchingGenerateResultPage from './components/pages/sql/patching/generate
 import PatchingTemplateModifyPage from './components/pages/sql/patching/template-modify';
 import PatchingTemplatePage from './components/pages/sql/patching/template';
 import TestPage from './components/pages/test';
+import PatchingOutputFilesPage from './components/pages/sql/patching/output-files';
 
 const routes = [
-    { path: path.main, element: <MainPage /> },
+    { path: path.main, element: <PatchingOutputFilesPage /> },
     { path: path.patchingGenerate, element: <PatchingGeneratePage /> },
     { path: path.patchingGenerateResult, element: <PatchingGenerateResultPage /> },
     { path: path.patchingTemplate, element: <PatchingTemplatePage />},
     { path: path.patchingTemplateModify, element: <PatchingTemplateModifyPage />},
+    { path: path.patchingOutputFiles, element: <PatchingOutputFilesPage />},
     { path: path.patchingSetting, element: <PatchingSettingPage />},
     { path: path.setting, element: <SettingPage />},
+    { path: path.test, element: <TestPage />}
 ];
 
 const router = createBrowserRouter([

@@ -2,7 +2,7 @@ import AppPageTitle from '../../../../ui/AppPageTitle';
 import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 import { Table } from 'antd';
-import GenerateTemplateControl from './GenerateTemplateControl';
+import TemplateControl from './TemplateControl';
 import useTemplate from '../../../../util/hooks/useTemplate';
 import { useNavigate } from 'react-router-dom';
 import { path } from '../../../../util/const/path';
@@ -86,7 +86,7 @@ const PatchingTemplatePage: React.FC = () => {
         <>
             <AppPageTitle>Sql Templates</AppPageTitle>
             {appAlert}
-            <GenerateTemplateControl
+            <TemplateControl
                 isChecked={isChecked}
                 onCreate={onCreate}
                 onEdit={onEdit}

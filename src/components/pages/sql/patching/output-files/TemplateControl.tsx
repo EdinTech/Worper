@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Dropdown, Space, Typography, Modal } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { GenerateTemplateControlProps } from '../../../../util/interface/pages';
+import { OutputFilesTemplateControlProps } from '../../../../util/interface/pages';
 
 const { Text } = Typography;
 
@@ -13,17 +13,13 @@ const config = {
     ),
 };
 
-const GenerateTemplateControl: React.FC<GenerateTemplateControlProps> = ({ isChecked, isValidated, onCreate, onEdit, onDelete }) => {
+const TemplateControl: React.FC<OutputFilesTemplateControlProps> = ({ isChecked, isValidated, onDelete }) => {
 
     const [modal, contextHolder] = Modal.useModal();
 
     const items: MenuProps['items'] = [
         {
-            key: '1', label: <Text>Edit</Text>,
-            onClick: onEdit
-        },
-        {
-            key: '2', label: <Text type='danger'>Delete</Text>,
+            key: '1', label: <Text type='danger'>Delete</Text>,
             onClick: async () => {
                 const confirmed = await modal.confirm(config);
                 confirmed && onDelete();
@@ -44,13 +40,10 @@ const GenerateTemplateControl: React.FC<GenerateTemplateControlProps> = ({ isChe
                             </Space>
                         </Button>
                     </Dropdown>
-                    <Button type="primary" onClick={onCreate} disabled={!isValidated}>
-                        Register
-                    </Button>
                 </Space>
             </div>
         </>
     )
 }
 
-export default GenerateTemplateControl;
+export default TemplateControl;
