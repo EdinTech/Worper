@@ -9,6 +9,7 @@ import { path } from '../../../../util/const/path';
 import type { ColumnsType } from 'antd/es/table';
 import type { TemplateListType } from '../../../../util/interface/common';
 import useValidateSetting from '../../../../util/hooks/useValidateSetting';
+import useServiceAccessHistory from '../../../../util/hooks/useServiceAccessHistory';
 
 const columns: ColumnsType<TemplateListType> = [
     {
@@ -28,13 +29,14 @@ const columns: ColumnsType<TemplateListType> = [
 
 const PatchingTemplatePage: React.FC = () => {
 
+    useServiceAccessHistory({log: true});
+
     const [templates, setTemplates] = useState<TemplateListType[]>();
     const [templateListItem, setTemplateListItem] = useState<TemplateListType>();
     const { templateListManager, templateIndexManager, templateManager } = useTemplate();
     const {isValidated, appAlert } = useValidateSetting();
     const [isChecked, setIsChecked] = useState(false);
     const navigate = useNavigate();
-
 
     useEffect(() => {
         templateListManager.get().then(setTemplates);

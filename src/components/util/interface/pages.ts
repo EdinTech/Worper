@@ -96,6 +96,7 @@ export interface GenerateTemplateModifyControlProps {
 export interface TemplateModifyFileInformation {
     templateListItem: TemplateListType;
     setTemplateListItem: React.Dispatch<React.SetStateAction<TemplateListType>>;
+    setDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface TemplateModifyFormProps {
@@ -108,4 +109,8 @@ export type TemplateModifyControlOnChangeState = ({ type, value }: { type: strin
 export interface TemplateModifyControl {
     template: TemplateType,
     onChangeState: TemplateModifyControlOnChangeState
+}
+
+export interface interfaceUseServiceAccessHistoryProps {
+    log: boolean;
 }

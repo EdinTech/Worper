@@ -9,6 +9,7 @@ import PatchingDescription from './PatchingDescription';
 import PatchingFileInfo, { getFileName } from './PatchingFileInfo';
 import AppPageTitle from '../../../../ui/AppPageTitle';
 import AppAlert from '../../../../ui/AppAlert';
+import useServiceAccessHistory from '../../../../util/hooks/useServiceAccessHistory';
 import useElectronStore from '../../../../util/hooks/useElectronStore';
 import useFileSystem from '../../../../util/hooks/useFileSystem';
 import { path } from '../../../../util/const/path';
@@ -31,6 +32,7 @@ const patchingFileInitialState: PatchingFile = {
 
 const PatchingGeneratePage: React.FC = () => {
 
+    useServiceAccessHistory({log: true});
     const [state, setState] = useState<PatchingFile>(patchingFileInitialState);
     const [outputPath, setOutputPath] = useState(null);
     const [messages, setMessages] = useState([]);

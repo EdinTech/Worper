@@ -3,17 +3,24 @@ import { path } from "./path";
 
 export const serviceInformations: ServiceInformation[] = [
     {
-        id: 'sql-file-generator',
+        id: 1,
         title: 'Sql File Generator',
         description: 'Generate SQL files for patching by a template',
         path: path.patchingGenerate,
         parentCategory: 'Sql'
     },
     {
-        id: 'sql-file-generator-templates',
-        title: 'Generator Templates',
-        description: 'Register and edit a Template to Generate SQL files',
+        id: 2,
+        title: 'Templates List',
+        description: 'A Template list to Generate SQL files',
         path: path.patchingTemplate,
+        parentCategory: 'Sql'
+    },
+    {
+        id: 3,
+        title: 'Template Editor',
+        description: 'Editor to Register and edit a Template for Generating SQL files',
+        path: path.patchingTemplateModify,
         parentCategory: 'Sql'
     }
 ];

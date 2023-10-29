@@ -77,12 +77,10 @@ const PatchingTemplate: React.FC<PatchingTemplateProps> = ({ setState }) => {
         }
 
         const template = result.data;
-        setState(preState => {
-            return {
-                ...preState,
-                ...template
-            }
-        });
+        setState(preState => ({
+            ...preState,
+            ...template
+        }));
     }
 
     return <>

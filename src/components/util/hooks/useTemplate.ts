@@ -94,7 +94,12 @@ const useTemplate = () => {
             if (!path) {
                 return;
             }
-            const file = await fs.readFile(`${path}/${fileName}`);
+            const filePath = `${path}/${fileName}`;
+            const exists = await fs.start(filePath);
+            if (!exists) {
+                return;
+            }
+            const file = await fs.readFile(filePath);
             return JSON.parse(file) as TemplateType;
         }
 

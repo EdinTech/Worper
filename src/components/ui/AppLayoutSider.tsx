@@ -17,6 +17,7 @@ const items: MenuItem[] = [
         getItem('Patching', 'Patching', null, [
             getItem('Generate', path.patchingGenerate),
             getItem('Template', path.patchingTemplate),
+            getItem('Setting', path.patchingSetting),
         ]),
     ]),
 ];

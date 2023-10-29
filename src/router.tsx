@@ -7,8 +7,8 @@ import SettingPage from './components/pages/setting';
 import ErrorPage from './components/pages/error/404';
 import { path } from './components/util/const/path';
 import PatchingGenerateResultPage from './components/pages/sql/patching/generate-result';
-import PatchingTemplateModifyPage from './components/pages/sql/patching/generate-template-modify';
-import PatchingTemplatePage from './components/pages/sql/patching/generate-template';
+import PatchingTemplateModifyPage from './components/pages/sql/patching/template-modify';
+import PatchingTemplatePage from './components/pages/sql/patching/template';
 import TestPage from './components/pages/test';
 
 const routes = [
