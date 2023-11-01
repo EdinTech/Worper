@@ -3,7 +3,7 @@ import { Button, Result, Alert } from 'antd';
 import ThrowError from './ThrowError';
 import GenerateResultSuccessSubTitle from './GenerateResultSuccessSubTitle';
 import { path } from '../../../../util/const/path';
-import type { PatchingGenerateResultPage } from '../../../../util/interface/pages';
+import { PatchingGenerateResultPage } from '../../../../util/interface/pages';
 
 const { ErrorBoundary } = Alert;
 

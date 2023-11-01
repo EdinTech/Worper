@@ -21,7 +21,7 @@ const items: MenuItem[] = [
             getItem('Setting', path.patchingSetting),
         ]),
     ]),
-    getItem('Test', path.test),
+    // getItem('Test', path.test),
 ];
 
 const bottomItems: MenuItem[] = [

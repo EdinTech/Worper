@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Card, Form, Input, } from 'antd';
-import type { TemplateIndex, TemplateModifyFileInformation } from '../../../../util/interface/pages';
+import { TemplateIndex, TemplateModifyFileInformation } from '../../../../util/interface/pages';
 import useTemplate from '../../../../util/hooks/useTemplate';
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 const { TextArea } = Input;

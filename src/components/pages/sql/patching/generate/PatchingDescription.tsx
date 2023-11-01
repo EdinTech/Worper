@@ -1,5 +1,5 @@
 import { Card, Input, } from 'antd';
-import type { PatchingComponentProps } from '../../../../util/interface/pages';
+import { PatchingComponentProps } from '../../../../util/interface/pages';
 
 const { TextArea } = Input;
 

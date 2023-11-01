@@ -3,7 +3,7 @@ import { Space } from 'antd';
 import PSDefaultPathControl from "./PSDefaultPathControl";
 import PSOutputPathControl from "./PSOutputPathControl";
 import SettingCard from "../ui/SettingCard";
-import type { TourProps } from 'antd';
+import { TourProps } from 'antd';
 
 const SettingPatchingSql = () => {
 

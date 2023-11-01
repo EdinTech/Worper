@@ -14,7 +14,7 @@ import SettingPage from './components/pages/setting';
 import TestPage from './components/pages/test';
 
 const routes = [
-    { path: path.main, element: <PatchingOutputFilePage /> },
+    { path: path.main, element: <MainPage /> },
     { path: path.patchingGenerate, element: <PatchingGeneratePage /> },
     { path: path.patchingGenerateResult, element: <PatchingGenerateResultPage /> },
     { path: path.patchingTemplate, element: <PatchingTemplatePage />},

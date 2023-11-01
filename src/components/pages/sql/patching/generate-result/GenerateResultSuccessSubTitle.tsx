@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Button, Descriptions, Space } from 'antd';
 import { CopyOutlined } from '@ant-design/icons';
 import useMessage from '../../../../util/hooks/useMessage';
-import type { GenerateResultSuccessSubTitleProps } from '../../../../util/interface/pages';
+import { GenerateResultSuccessSubTitleProps } from '../../../../util/interface/pages';
 
 const GenerateResultSuccessSubTitle: React.FC<GenerateResultSuccessSubTitleProps> = ({ filePath, fileName }) => {
 

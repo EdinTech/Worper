@@ -15,7 +15,7 @@ import useFileSystem from '../../../../util/hooks/useFileSystem';
 import { path } from '../../../../util/const/path';
 import { PATCHING } from '../../../../util/const/setting';
 import { NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE } from '../../../../util/const/message';
-import type { PatchingFile, } from '../../../../util/interface/pages';
+import { PatchingFile, } from '../../../../util/interface/pages';
 
 const patchingFileInitialState: PatchingFile = {
     id: 0,

@@ -1,5 +1,5 @@
 import { Card, Tour } from 'antd';
-import type { TourProps } from 'antd';
+import { TourProps } from 'antd';
 import InfoIcon from "./SettingInfoIcon";
 
 export interface SettingCardProps {

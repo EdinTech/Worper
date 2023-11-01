@@ -1,6 +1,6 @@
 import AppPageTitle from "../../ui/AppPageTitle";
 import SettingPatchingSql from "./patching-sql";
-import type { AppAlert as alertType } from "../../util/interface/pages";
+import { AppAlert as alertType } from "../../util/interface/pages";
 import { useEffect, useState } from "react";
 import AppAlert from "../../ui/AppAlert";
 import useElectronStore from "../../util/hooks/useElectronStore";

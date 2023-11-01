@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Card, Descriptions, } from 'antd';
-import type { DescriptionsProps } from 'antd';
-import type { GetFileName, PatchingFileInfoProps } from '../../../../util/interface/pages';
+import { DescriptionsProps } from 'antd';
+import { GetFileName, PatchingFileInfoProps } from '../../../../util/interface/pages';
 
 export const getFileName: GetFileName = (patchingFile, extension) => {
     let fileName = `${patchingFile.id}_apply${patchingFile.applyingDate}${patchingFile.applier}_check${patchingFile.checkingDate}${patchingFile.checker}_${patchingFile.tableName}_${patchingFile.action}`;

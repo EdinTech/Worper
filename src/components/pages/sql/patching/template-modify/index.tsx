@@ -11,8 +11,8 @@ import useServiceAccessHistory from '../../../../util/hooks/useServiceAccessHist
 import useTemplate from '../../../../util/hooks/useTemplate';
 import useMessage from '../../../../util/hooks/useMessage';
 import { path } from '../../../../util/const/path';
-import type { TemplateType, TemplateListType } from '../../../../util/interface/common';
-import type { PatchingTemplateModifyPageProps } from '../../../../util/interface/pages';
+import { TemplateType, TemplateListType } from '../../../../util/interface/common';
+import { PatchingTemplateModifyPageProps } from '../../../../util/interface/pages';
 
 const patchingFileInitialState: TemplateType = {
     applier: '',
