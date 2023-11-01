@@ -8,7 +8,8 @@ export const path = {
     patchingTemplate: "/sql/patching/template",
     patchingTemplateModify: "/sql/patching/template/modify",
     patchingTemplateModifyResult: "/sql/patching/modify/result",
-    patchingOutputFiles: "/sql/patching/output-files",
+    patchingOutputFile: "/sql/patching/output-files",
+    patchingOutputFileEdit: "/sql/patching/output-files/edit",
     patchingSetting: "/sql/patching/setting",
 
     // slq > searching

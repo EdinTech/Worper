@@ -115,8 +115,49 @@ export interface interfaceUseServiceAccessHistoryProps {
     log: boolean;
 }
 
-export interface OutputFilesTemplateControlProps {
+
+export interface TemplateModifyControlProps {
+    onCreate: () => void;
     onDelete: () => void;
-    isChecked: boolean;
-    isValidated: boolean;
+    onUpdate: () => void;
+    type: "create" | "modify";
+    disabled: boolean;
+}
+
+export interface OutputFilesTemplateControlProps {
+    onDelete: () => void,
+    onEdit: () => void,
+    isChecked: boolean,
+    isValidated: boolean,
+    selectedFileLength: number
+}
+
+export type FileStateType = {
+    atime: string;
+    mtime: string;
+    ctime: string;
+    birthtime: string;
+    size: string;
+    path: string;
+    name: string;
+    content: string;
+    originName: string;
+    isChanged: boolean;
+}
+
+export interface FileInformationProps {
+    fileState: FileStateType;
+}
+
+
+export interface FileEditControlProps {
+    onUpdate: () => Promise<void>
+    onCancel: () => void
+    disabled: boolean
+}
+
+export interface FileContentProps {
+    fileState: FileStateType;
+    setFileState: React.Dispatch<React.SetStateAction<FileStateType>>;
+    setDisabled: React.Dispatch<React.SetStateAction<boolean>>
 }

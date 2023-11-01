@@ -12,6 +12,8 @@ export interface ElectronAPI {
     sendListFilesRequest(directoryPath: string): Promise<string[]>;
     sendExistsDirectoryRequest(directoryPath: string): Promise<boolean>;
     sendCreateDirectoryRequest(directoryPath: string): Promise<boolean>;
+    sendStatRequest(filePath: string): Promise<Stats>;
+    sendRenameFileRequest(filePath: string, newFilePath: string): Promise<boolean>;
     sendSetStoreRequest(key: string, value: T): Promise<boolean>;
     sendGetStoreRequest(key: string): Promise<T>;
     sendClearStoreRequest(): Promise<boolean>;

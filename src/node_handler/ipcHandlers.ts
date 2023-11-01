@@ -74,6 +74,26 @@ const sendCreateDirectoryRequest: IpcHandler = async (event, dirPath: string) =>
     }
 }
 
+const handleStat: IpcHandler = async (event, filePath: string) => {
+    try {
+        const stat = await fs.stat(filePath);
+        return stat;
+    } catch (error) {
+        console.error('Error getting file stat:', error);
+        throw error;
+    }
+}
+
+const handleRenameFile: IpcHandler = async (event, filePath: string, newFilePath: string) => {
+    try {
+        await fs.rename(filePath, newFilePath);
+        return true;
+    } catch (error) {
+        console.error('Error renaming file:', error);
+        throw error;
+    }
+}
+
 const store = new Store();
 const handleSetStore: IpcHandler = async (event, key: string, value: any) => {
     store.set(key, value);
@@ -102,6 +122,8 @@ export const handlers = {
     'list-files': handleListFiles,
     'exists-directory': handleExistsDirectory,
     'create-directory': sendCreateDirectoryRequest,
+    'stat': handleStat,
+    'rename-file': handleRenameFile,
     'set-store': handleSetStore,
     'get-store': handleGetStore,
     'clear-store': handleClearStore,

@@ -58,10 +58,9 @@ const PatchingTemplateModifyPage: React.FC = () => {
             return;
         }
         setTemplateListItem(locatedTemplateListItem);
-
-        (async () => {
-            setTemplate(await templateManager.get(locatedTemplateListItem.file));
-        })();
+        templateManager
+            .get(locatedTemplateListItem.file)
+            .then(setTemplate);
     }, []);
 
     const onCreate = async () => {

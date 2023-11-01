@@ -19,7 +19,7 @@ const PatchingSql: React.FC<PatchingComponentProps> = ({ state, setState}) => {
                 rows={15}
                 defaultValue={sql}
                 value={state.sql}
-                onChange={e => setState({ ...state, sql: e.target.value.trim() })}
+                onChange={e => setState({ ...state, sql: e.target.value })}
             />
         </Card>
     );

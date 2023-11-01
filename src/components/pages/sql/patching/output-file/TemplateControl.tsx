@@ -13,13 +13,21 @@ const config = {
     ),
 };
 
-const TemplateControl: React.FC<OutputFilesTemplateControlProps> = ({ isChecked, isValidated, onDelete }) => {
+const TemplateControl: React.FC<OutputFilesTemplateControlProps> = ({ isChecked, isValidated, selectedFileLength, onDelete, onEdit }) => {
 
     const [modal, contextHolder] = Modal.useModal();
 
     const items: MenuProps['items'] = [
         {
-            key: '1', label: <Text type='danger'>Delete</Text>,
+            key: '1', label: <Text disabled={selectedFileLength !== 1}>Edit</Text>,
+            onClick: () => {
+                if (selectedFileLength === 1) {
+                    onEdit();
+                }
+            }
+        },
+        {
+            key: '2', label: <Text type='danger'>Delete</Text>,
             onClick: async () => {
                 const confirmed = await modal.confirm(config);
                 confirmed && onDelete();

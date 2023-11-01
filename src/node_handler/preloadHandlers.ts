@@ -1,4 +1,5 @@
 import { ipcRenderer } from 'electron';
+import type { Stats } from 'fs';
 
 /**
  * send create file request
@@ -51,6 +52,19 @@ export function sendExistsDirectoryRequest(directoryPath: string): Promise<boole
 
 export function sendCreateDirectoryRequest(directoryPath: string): Promise<boolean> {
     return ipcRenderer.invoke('create-directory', directoryPath);
+}
+
+/**
+ * send stat request
+ * @param filePath
+ * @returns
+ */
+export function sendStatRequest(filePath: string): Promise<Stats> {
+    return ipcRenderer.invoke('stat', filePath);
+}
+
+export function sendRenameFileRequest(filePath: string, newFilePath: string): Promise<boolean> {
+    return ipcRenderer.invoke('rename-file', filePath, newFilePath);
 }
 
 export function sendSetStoreRequest(key: string, value: any): Promise<boolean> {

@@ -83,7 +83,29 @@ const useFileSystem = () => {
             }
         }
 
-        return { createFile, writeFile, readFile, unlink, readdir, start, mkdir }
+        const stat = async (filePath: string) => {
+            setIsLoading(true);
+            try {
+                return await window.electron.sendStatRequest(filePath);
+            } catch (error) {
+                setError(error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        const rename = async (filePath: string, newFilePath: string) => {
+            setIsLoading(true);
+            try {
+                return await window.electron.sendRenameFileRequest(filePath, newFilePath);
+            } catch (error) {
+                setError(error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        return { createFile, writeFile, readFile, unlink, readdir, start, mkdir, stat, rename }
     }
 
     const fs = createFileSystem();

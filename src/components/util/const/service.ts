@@ -22,5 +22,12 @@ export const serviceInformations: ServiceInformation[] = [
         description: 'Editor to Register and edit a Template for Generating SQL files',
         path: path.patchingTemplateModify,
         parentCategory: 'Sql'
-    }
+    },
+    {
+        id: 4,
+        title: 'Output Files',
+        description: 'Output Files for Patching',
+        path: path.patchingOutputFile,
+        parentCategory: 'Sql'
+    },
 ];

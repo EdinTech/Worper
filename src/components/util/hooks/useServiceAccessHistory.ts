@@ -19,8 +19,10 @@ function useServiceAccessHistory(payload?: { log: boolean} | null) {
 
     const setStoreHistoryByPath =async () => {
         const path = location.pathname;
-        
         const currentService = serviceInformations.filter(information => information.path === path)[0];
+        if (!currentService) {
+            return;
+        }
         const storedHistory = await window.electron.sendGetStoreRequest(key);
         if (!storedHistory) {
             const newHistory = { [currentService.title]: new Date().toISOString() }
@@ -34,7 +36,7 @@ function useServiceAccessHistory(payload?: { log: boolean} | null) {
     }
 
     const getStoreHistoryOrderBy = async (limit: number) => {
-        
+
         const storedHistory = await window.electron.sendGetStoreRequest(key);
         if (!storedHistory) {
             return [];

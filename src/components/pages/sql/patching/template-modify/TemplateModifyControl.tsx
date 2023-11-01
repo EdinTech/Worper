@@ -1,13 +1,6 @@
 import { Button, Modal, Space } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
-
-export interface TemplateModifyControlProps {
-    onCreate: () => void;
-    onDelete: () => void;
-    onUpdate: () => void;
-    type: "create" | "modify";
-    disabled: boolean;
-}
+import { TemplateModifyControlProps } from '../../../../util/interface/pages';
 
 const config = {
     title: 'Delete the task',
