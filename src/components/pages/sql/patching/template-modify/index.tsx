@@ -7,43 +7,17 @@ import TemplateModifySql from './TemplateModifySql';
 import TemplateModifyControl from './TemplateModifyControl';
 import TemplateModifyFileInformation from './TemplateModifyFileInformation';
 import AppPageTitle from '../../../../ui/AppPageTitle';
-import useServiceAccessHistory from '../../../../util/hooks/useServiceAccessHistory';
 import useTemplate from '../../../../util/hooks/useTemplate';
 import useMessage from '../../../../util/hooks/useMessage';
 import { path } from '../../../../util/const/path';
 import { TemplateType, TemplateListType } from '../../../../util/interface/common';
 import { PatchingTemplateModifyPageProps } from '../../../../util/interface/pages';
 
-const patchingFileInitialState: TemplateType = {
-    applier: '',
-    checker: '',
-    tableName: '',
-    action: '',
-    sql: '',
-    description: '',
-    extension: 'sql',
-};
-
-const templateListInitialState: TemplateListType = {
-    key: "",
-    template: "",
-    description: "",
-    file: "",
-    createdAt: ""
-}
-
-const templateListLocationState: PatchingTemplateModifyPageProps = {
-    templateListItem: templateListInitialState,
-    type: "create"
-}
-
 const PatchingTemplateModifyPage: React.FC = () => {
-
-    useServiceAccessHistory({log: true});
 
     const navigate = useNavigate();
     const location = useLocation();
-    const { templateListItem: locatedTemplateListItem, type } = location.state ? location.state : templateListLocationState as PatchingTemplateModifyPageProps;
+    const { value: locationValue, type } = location.state ? location.state : templateListLocationState as PatchingTemplateModifyPageProps;
 
     const [disabled, setDisabled] = useState(true);
     const [template, setTemplate] = useState<TemplateType>(patchingFileInitialState);
@@ -51,59 +25,66 @@ const PatchingTemplateModifyPage: React.FC = () => {
     const { templateManager, templateListManager, templateIndexManager } = useTemplate();
     const { message, contextHolder } = useMessage();
 
-    const pageTitle = type === 'modify' ? 'Modify Template' : 'Create Template';
     useEffect(() => {
 
         if (type !== 'modify') {
             return;
         }
-        setTemplateListItem(locatedTemplateListItem);
+
+        setTemplateListItem(locationValue);
         templateManager
-            .get(locatedTemplateListItem.file)
+            .get(locationValue.key)
             .then(setTemplate);
     }, []);
 
     const onCreate = async () => {
         message.loading("Creating...", 'onCreate');
-        if (!templateListItem.template) {
+        if (!templateListItem.templateTitle) {
             message.error("Creating is failed", "onCreate");
             message.error("Template title is required");
             return;
         }
         const { fileName } = await templateManager.create(template);
-        const templateItemToCreate = {
+
+        const key = dayjs().millisecond().toString();
+        const newTemplateListItem = {
             ...templateListItem
-            , key: dayjs().millisecond().toString()
-            , file: fileName
+            , key: key
+            , fileName: fileName
             , createdAt: dayjs().format()
+            , updatedAt: dayjs().format()
         };
 
-        templateListManager.add(templateItemToCreate);
-        templateIndexManager.add({ [templateItemToCreate.template]: templateItemToCreate.file });
+        await templateIndexManager.add({ [newTemplateListItem.templateTitle]: newTemplateListItem.key });
+        await templateListManager.add(key, newTemplateListItem);
         message.success("Template is created", "onCreate");
         setTimeout(() => {
-            navigate(path.patchingTemplateModify, {
-                state: {
-                    templateListItem: templateItemToCreate,
-                    type: 'modify'
-                }
-            });
-        }, 1000)
+            navigate(path.patchingTemplate);
+        }, 500)
     }
 
     const onUpdate = async () => {
         message.loading("Updating...", "onUpdate")
-        if (!templateListItem.template) {
+        const newTemplateListItem = {
+            ...templateListItem,
+            templateTitle: templateListItem.templateTitle.trim(),
+            templateDescription: templateListItem.description.trim(),
+            updatedAt: dayjs().format()
+        };
+        if (!newTemplateListItem.templateTitle) {
             message.error("Updating is failed", "onUpdate");
             message.error("Template title is required");
             return;
         }
-        templateListManager.update(templateListItem);
-        templateIndexManager.remove(templateListItem.template);
-        templateIndexManager.add({ [templateListItem.template]: templateListItem.file });
-        templateManager.update(templateListItem.file, template);
+        await templateIndexManager.remove(locationValue.templateTitle, "title_index");
+        await templateIndexManager.add({ [newTemplateListItem.templateTitle]: newTemplateListItem.key });
+        await templateListManager.update(newTemplateListItem.key, newTemplateListItem);
+        await templateManager.update(newTemplateListItem.key, template);
 
         message.success("Template is updated", "onUpdate");
+        setTimeout(() => {
+            navigate(path.patchingTemplate);
+        }, 500)
     }
 
     const onDelete = async () => {
@@ -112,20 +93,22 @@ const PatchingTemplateModifyPage: React.FC = () => {
             message.error("Deleting is failed", "onDelete")
             return;
         }
-        templateListManager.remove(templateListItem.key);
-        templateIndexManager.remove(templateListItem.template);
-        templateManager.remove(templateListItem.file);
+        await templateIndexManager.remove(locationValue.templateTitle, "title_index");
+        await templateListManager.remove(templateListItem.key);
+        await templateManager.remove(templateListItem.key);
         message.success("Template is deleted", "onDelete");
         setTimeout(() => {
             navigate(path.patchingTemplate);
-        }, 1000)
+        }, 500)
     }
 
 
     return (
         <>
             {contextHolder}
-            <AppPageTitle previousPage='Sql Templates' previousPath={path.patchingTemplate}>{pageTitle}</AppPageTitle>
+            <AppPageTitle previousPage='Sql Templates' previousPath={path.patchingTemplate}>
+                {type === 'modify' ? 'Modify Template' : 'Create Template'}
+            </AppPageTitle>
 
             {/* file Information component */}
             <TemplateModifyFileInformation templateListItem={templateListItem} setTemplateListItem={setTemplateListItem} setDisabled={setDisabled} />
@@ -146,3 +129,28 @@ const PatchingTemplateModifyPage: React.FC = () => {
 }
 
 export default PatchingTemplateModifyPage;
+
+
+const patchingFileInitialState: TemplateType = {
+    applier: '',
+    checker: '',
+    tableName: '',
+    action: '',
+    sql: '',
+    description: '',
+    extension: 'sql',
+};
+
+const templateListInitialState: TemplateListType = {
+    key: "",
+    templateTitle: "",
+    description: "",
+    fileName: "",
+    createdAt: "",
+    updatedAt: ""
+}
+
+const templateListLocationState: PatchingTemplateModifyPageProps = {
+    value: templateListInitialState,
+    type: "create"
+}

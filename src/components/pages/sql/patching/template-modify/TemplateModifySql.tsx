@@ -10,7 +10,7 @@ const TemplateModifySql: React.FC<TemplateModifyFormProps> = ({ template, setTem
             <TextArea
                 rows={15}
                 value={template.sql}
-                onChange={e => setTemplate({ ...template, sql: e.target.value.trim() })}
+                onChange={e => setTemplate({ ...template, sql: e.target.value })}
             />
         </Card>
     );

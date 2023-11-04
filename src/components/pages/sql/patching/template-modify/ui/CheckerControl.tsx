@@ -9,7 +9,7 @@ let index = 0;
 
 const PBCheckerControl: React.FC<TemplateModifyControl> = ({ template, onChangeState }) => {
 
-    const { useSetting } = usePatchingSetting();
+    const { getSetting } = usePatchingSetting();
 
     const [items, setItems] = useState([]);
     const [name, setName] = useState('');
@@ -18,7 +18,7 @@ const PBCheckerControl: React.FC<TemplateModifyControl> = ({ template, onChangeS
     useEffect(() => {
 
         (async () => {
-            const setting = await useSetting();
+            const setting = await getSetting();
             setItems(setting.members);
             onChangeState({ type: 'checker', value: setting.default_checker })
         })();

@@ -14,8 +14,24 @@ export interface Pages {
 
 export type TemplateListType = {
     "key": string,
-    "template": string,
+    "templateTitle": string,
     "description": string,
-    "file": string,
-    "createdAt": string
+    "fileName": string,
+    "createdAt": string,
+    "updatedAt": string
+}
+
+export type IFTemplateList = {
+    [key: string]: TemplateListType
+}
+
+export type PatchingSetting = {
+    default_applicant: string,
+    default_checker: string,
+    members: string[],
+    action: string[],
+    action_auto_saving: "on"|"off",
+    table_name: {
+        [value: string]: string
+    },
 }

@@ -1,54 +1,50 @@
-// hooks/useElectronStore.ts
-import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { serviceInformations } from '../const/service';
-
-export interface History {
-    [key: string]: string;
-}
+import useStore from './useStore';
 
 const key = 'serviceAccessHistory';
 
-function useServiceAccessHistory(payload?: { log: boolean} | null) {
+const defaultLimit = 20;
+
+function useServiceAccessHistory() {
     const location = useLocation();
-    useEffect(() => {
-        if (payload?.log) {
-            setStoreHistoryByPath();
-        }
-    }, []);
+    const { store } = useStore();
 
-    const setStoreHistoryByPath =async () => {
-        const path = location.pathname;
-        const currentService = serviceInformations.filter(information => information.path === path)[0];
-        if (!currentService) {
-            return;
-        }
-        const storedHistory = await window.electron.sendGetStoreRequest(key);
-        if (!storedHistory) {
-            const newHistory = { [currentService.title]: new Date().toISOString() }
-            await window.electron.sendSetStoreRequest(key, JSON.stringify(newHistory));
-            return;
-        }
-        const history = JSON.parse(storedHistory as string);
+    const createServiceAccessHistory = () => {
+        const log =async () => {
+            const path = location.pathname;
+            const currentService = serviceInformations.find(information => information.path === path);
+            if (!currentService) {
+                return;
+            }
+            const history = await store.get(key);
+            if (!history) {
+                const newHistory = { [currentService.title]: new Date().toISOString() }
+                store.set(key, newHistory);
+                return;
+            }
 
-        const newHistory = { ...history, [currentService.title]: new Date().toISOString() }
-        await window.electron.sendSetStoreRequest(key, JSON.stringify(newHistory));
+            const newHistory = { ...history, [currentService.title]: new Date().toISOString() }
+            store.set(key, newHistory);
+        }
+
+        const get = async (limit: number) => {
+            const history = await store.get(key);
+            if (!history) {
+                return [];
+            }
+            const historyArray = Object.entries(history) as Array<[string, string]>;
+            return historyArray
+                .sort((a, b) => (b[1]).localeCompare(a[1]))
+                .slice(0, limit ?? defaultLimit);
+        }
+
+        return { log, get } as const;
     }
 
-    const getStoreHistoryOrderBy = async (limit: number) => {
+    const history = createServiceAccessHistory();
 
-        const storedHistory = await window.electron.sendGetStoreRequest(key);
-        if (!storedHistory) {
-            return [];
-        }
-        const historyObj = JSON.parse(storedHistory as string);
-        const historyArray = Object.entries(historyObj) as Array<[string, string]>;
-        historyArray.sort((a, b) => (b[1]).localeCompare(a[1]));
-        const fetchCount = limit ?? 20;
-        return historyArray.slice(0, fetchCount);
-    }
-
-    return { history, getStoreHistoryOrderBy, setStoreHistoryByPath } as const;
+    return { history } as const;
 }
 
 export default useServiceAccessHistory;

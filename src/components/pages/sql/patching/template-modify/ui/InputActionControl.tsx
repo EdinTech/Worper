@@ -5,7 +5,7 @@ import usePatchingSetting from '../../../../../util/hooks/usePatchingSetting';
 
 const PBInputActionControl: React.FC<TemplateModifyControl> = ({ template, onChangeState }) => {
 
-    const { useSetting } = usePatchingSetting();
+    const { getSetting } = usePatchingSetting();
 
     const [options, setOptions] = useState<{ value: string }[]>([]);
     const [keyword, setKeyword] = useState<string>("");
@@ -15,7 +15,7 @@ const PBInputActionControl: React.FC<TemplateModifyControl> = ({ template, onCha
     useEffect(() => {
 
         (async () => {
-            const setting = await useSetting();
+            const setting = await getSetting();
             setActions(setting.action);
         })();
 
@@ -26,6 +26,8 @@ const PBInputActionControl: React.FC<TemplateModifyControl> = ({ template, onCha
     }, [template]);
 
     useEffect(() => {
+
+        onChangeState({ type: "action", value: keyword });
 
         if (!keyword || !actions || actions.length === 0) {
             return;

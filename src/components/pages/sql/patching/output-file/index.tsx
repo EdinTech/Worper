@@ -5,45 +5,33 @@ import { useNavigate } from 'react-router-dom';
 import { path } from '../../../../util/const/path';
 import type { ColumnsType } from 'antd/es/table';
 import useValidateSetting from '../../../../util/hooks/useValidateSetting';
-import useServiceAccessHistory from '../../../../util/hooks/useServiceAccessHistory';
 import useFileSystem from '../../../../util/hooks/useFileSystem';
-import useElectronStore from '../../../../util/hooks/useElectronStore';
 import useMessage from '../../../../util/hooks/useMessage';
-import { PATCHING } from '../../../../util/const/setting';
-import TemplateControl from './TemplateControl';
-
-const columns: ColumnsType = [
-    {
-        title: 'File',
-        dataIndex: 'file',
-    }
-];
+import OutputFileControl from './OutputFileControl';
+import useSetting from '../../../../util/hooks/useSetting';
+import OutputFileSearchInput from './OutputFileSearchInput';
 
 const PatchingOutputFilePage = () => {
 
-    useServiceAccessHistory({ log: true });
-
     const navigate = useNavigate();
     const [files, setFiles] = useState<ColumnsType>();
+    const [filteredFiles, setFilteredFiles] = useState<ColumnsType>();
     const [selectedFilePaths, setSelectedFilePaths] = useState<string[]>();
     const { isValidated, appAlert } = useValidateSetting();
-    const { electronStore } = useElectronStore();
+    const { patchingSetting } = useSetting();
     const { message, contextHolder } = useMessage();
     const { fs } = useFileSystem();
 
     useEffect(() => {
         (async () => {
-            let outputPath = await electronStore.get(PATCHING.DEFAULT_OUTPUT_DIRECTORY_PATH_KEY)
+            const outputPath = await patchingSetting.getCurrentOutputDirectoryPath();
             if (!outputPath) {
                 return;
-            }
-            const customOutputPath = await electronStore.get(PATCHING.OUTPUT_DIRECTORY_PATH_KEY);
-            if (customOutputPath) {
-                outputPath = customOutputPath;
             }
             const files = await fs.readdir(outputPath);
             const fileKeyFilePairs = files.map(file => ({ key: `${outputPath}/${file}`, file }));
             setFiles(fileKeyFilePairs);
+            setFilteredFiles(fileKeyFilePairs);
         })();
     }, []);
 
@@ -67,28 +55,59 @@ const PatchingOutputFilePage = () => {
         setSelectedFilePaths(selectedRowKeys)
     }
 
+    const onSearch = (value: React.ChangeEvent<HTMLInputElement>) => {
+        const keyword = value.target.value;
+        searchByKeyword(keyword, files, setFilteredFiles);
+    }
     return (
         <>
             {contextHolder}
             <AppPageTitle>Sql Files</AppPageTitle>
             {appAlert}
-            <TemplateControl
+            <OutputFileControl
                 isChecked={selectedFilePaths && selectedFilePaths.length > 0}
                 isValidated={isValidated}
                 selectedFileLength={selectedFilePaths?.length}
                 onDelete={onDelete}
                 onEdit={onEdit}
             />
+            <OutputFileSearchInput onChange={onSearch} />
             <Table
                 rowSelection={{
                     type: 'checkbox',
                     onChange: onChange,
                 }}
                 columns={columns}
-                dataSource={files}
+                dataSource={filteredFiles}
             />
         </>
     );
 }
 
 export default PatchingOutputFilePage;
+
+const columns: ColumnsType = [
+    {
+        title: 'File',
+        dataIndex: 'file',
+    }
+];
+
+let timeout: ReturnType<typeof setTimeout> | null;
+
+const searchByKeyword = (keyword: string, list: ColumnsType, callback: React.Dispatch<React.SetStateAction<ColumnsType>>) => {
+    if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
+    }
+
+    if (!keyword) {
+        callback(list);
+        return;
+    }
+
+    timeout = setTimeout(() => {
+        const newList = list.filter((v: { key: string, file:string }) => v.file.includes(keyword))
+        callback(newList);
+    }, 300);
+}

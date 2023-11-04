@@ -19,7 +19,7 @@ const TemplateModifyFileInformation: React.FC<TemplateModifyFileInformation> = (
 
     useEffect(() => {
         const timeoutFunc = setTimeout(() => {
-            if (templateIndex && templateIndex.template_title_index[templateListItem.template]) {
+            if (templateIndex && templateIndex.title_index[templateListItem.templateTitle]) {
                 setDisabled(true);
                 setExistsFileName(true);
             } else {
@@ -31,7 +31,7 @@ const TemplateModifyFileInformation: React.FC<TemplateModifyFileInformation> = (
         return () => {
             clearTimeout(timeoutFunc);
         }
-    }, [templateListItem.template]);
+    }, [templateListItem.templateTitle]);
 
     return (
         <Card title="File Information" style={{ marginBottom: 16 }}>
@@ -46,9 +46,9 @@ const TemplateModifyFileInformation: React.FC<TemplateModifyFileInformation> = (
                         showCount
                         required={true}
                         status={existsFileName ? "error" : undefined}
-                        value={templateListItem.template}
+                        value={templateListItem.templateTitle}
                         prefix={existsFileName ? <><ExclamationCircleOutlined />File name is already exists</> : undefined}
-                        onChange={(e) => setTemplateListItem({ ...templateListItem, template: e.target.value })}
+                        onChange={(e) => setTemplateListItem({ ...templateListItem, templateTitle: e.target.value })}
                         maxLength={50}
                     />
                 </Form.Item>

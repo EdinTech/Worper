@@ -1,17 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import dayjs from 'dayjs';
 import VirtualList from 'rc-virtual-list';
 import { List, Typography  } from 'antd';
-import { ServiceInformation } from '../../../util/interface/main';
+import { CodeSandboxOutlined } from '@ant-design/icons';
+
 import useServiceAccessHistory from '../../../util/hooks/useServiceAccessHistory';
 import { serviceInformations } from '../../../util/const/service';
-import { CodeSandboxOutlined } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
-
-
-export type MainServiceRecentlyProps = {
-    createdAt: string;
-} & ServiceInformation;
+import { MainServiceRecentlyProps } from '../../../util/interface/pages';
 
 const getCompareTime = (accessTime: string) => {
     const compareTime = dayjs(accessTime);
@@ -36,20 +32,22 @@ const getIcon = (parentCategory: string) => {
 }
 
 const MainServiceRecently = () => {
-    const { getStoreHistoryOrderBy } = useServiceAccessHistory();
+    const { history } = useServiceAccessHistory();
     const [data, setData] = useState<MainServiceRecentlyProps[]>();
-    
+
     useEffect(() => {
         (async () => {
-            const history = await getStoreHistoryOrderBy(5);
+            const histories = await history.get(5);
 
             const fetchedData: MainServiceRecentlyProps[] = [];
-            history.forEach(h => {
-                const info = serviceInformations.find(v => v.title == h[0]);
+            histories.forEach(h => {
+                const serviceTitle = h[0];
+                const serviceAccessTime = h[1];
+                const info = serviceInformations.find(v => v.title === serviceTitle);
                 if (info) {
                     fetchedData.push({
                         ...info,
-                        createdAt: h[1]
+                        accessTime: serviceAccessTime
                     });
                 }
             })
@@ -74,7 +72,7 @@ const MainServiceRecently = () => {
                                     <>
                                         <Link to={item.path}>{item.title}</Link> <br/>
                                         <Text italic={true} type='secondary'>
-                                            {getCompareTime(item.createdAt)}
+                                            {getCompareTime(item.accessTime)}
                                         </Text>
                                     </>
                                     )}

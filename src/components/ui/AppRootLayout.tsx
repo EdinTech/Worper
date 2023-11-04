@@ -1,30 +1,30 @@
-import React, { useState } from 'react';
-import { Layout } from 'antd';
-import { Outlet } from 'react-router-dom';
-import AppLayoutSider from './AppLayoutSider';
-import AppLayoutContent from './AppLayoutContent';
+import React from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
+import AppLayout from './AppLayout';
+import useServiceAccessHistory from '../util/hooks/useServiceAccessHistory';
+import { path } from '../util/const/path';
 
+const requiredPathsForLogs = [
+    path.patchingGenerate,
+    path.patchingTemplate,
+    path.patchingOutputFile,
+]
 
-const AppLayout: React.FC = () => {
-    const [collapsed, setCollapsed] = useState(false);
-    const onClickSider = (value: boolean) => {
-        setCollapsed(value);
+const AppRootLayout: React.FC = () => {
+
+    const location = useLocation();
+    const { history } = useServiceAccessHistory();
+
+    if (requiredPathsForLogs.includes(location.pathname)) {
+        history.log();
     }
+
     return (
-        <Layout style={{ minHeight: '100vh' }}>
-
-            {/* side menu component */}
-            <AppLayoutSider onClick={onClickSider} collapsed={collapsed} />
-
-            {/* main content component */}
-            <AppLayoutContent collapsed={collapsed}>
-
+        <AppLayout>
                 {/* outlet component */}
                 <Outlet />
-
-            </AppLayoutContent>
-        </Layout>
+        </AppLayout>
     );
 };
 
-export default AppLayout;
+export default AppRootLayout;

@@ -1,19 +1,18 @@
 import { useState } from "react";
-import { Space } from 'antd';
-import PSDefaultPathControl from "./PSDefaultPathControl";
-import PSOutputPathControl from "./PSOutputPathControl";
+import { Space, TourProps } from 'antd';
+import PatchingSqlDefaultPathControl from "./PatchingSqlDefaultPathControl";
+import PatchingSqlOutputPathControl from "./PatchingSqlOutputPathControl";
 import SettingCard from "../ui/SettingCard";
-import { TourProps } from 'antd';
 
-const SettingPatchingSql = () => {
+const SettingPatchingSql: React.FC= () => {
 
     const [tourOpen, setTourOpen] = useState<boolean>(false);
     return (
         <>
-            <SettingCard title="Patching Sql" steps={steps} tourOpen={tourOpen} setTourOpen={setTourOpen} >
+            <SettingCard title="Sql Generator Path" steps={steps} tourOpen={tourOpen} setTourOpen={setTourOpen} >
                 <Space direction="vertical" style={{ width: "100%" }}>
-                    <PSDefaultPathControl />
-                    <PSOutputPathControl />
+                    <PatchingSqlDefaultPathControl />
+                    <PatchingSqlOutputPathControl />
                 </Space>
             </SettingCard>
         </>

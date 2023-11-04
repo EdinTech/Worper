@@ -10,7 +10,7 @@ let index = 0;
 
 const PBCheckerControl: React.FC<PBControl> = ({ state, onChangeState }) => {
 
-    const { useSetting } = usePatchingSetting();
+    const { getSetting } = usePatchingSetting();
 
     const [items, setItems] = useState([]);
     const [name, setName] = useState('');
@@ -19,7 +19,7 @@ const PBCheckerControl: React.FC<PBControl> = ({ state, onChangeState }) => {
     useEffect(() => {
 
         (async () => {
-            const setting = await useSetting();
+            const setting = await getSetting();
             if (!setting) {
                 return;
             }

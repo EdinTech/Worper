@@ -1,11 +1,22 @@
+import { TourProps } from "antd";
 import { TemplateListType, TemplateType } from "./common";
+
+export interface ServiceInformation {
+    id: number;
+    title: string;
+    description: string;
+    path: string;
+    parentCategory: string;
+}
+
+export type MainServiceRecentlyProps = {
+    accessTime: string;
+} & ServiceInformation;
 
 export interface SettingPatchingSql {
     defaultPath: string;
     templatePath: string;
 }
-
-export type AppAlert = (title: string, message: string) => void;
 
 export interface PatchingFile {
     id: number,
@@ -59,7 +70,7 @@ export interface GenerateResultSuccessSubTitleProps {
 }
 
 export interface TemplateIndex {
-    "template_title_index": {
+    "title_index": {
         [title: string]: string
     }
 }
@@ -80,7 +91,7 @@ export interface TemplateControlProps {
 }
 
 export interface PatchingTemplateModifyPageProps {
-    templateListItem: TemplateListType;
+    value: TemplateListType;
     type: "modify" | "create";
 }
 
@@ -124,7 +135,7 @@ export interface TemplateModifyControlProps {
     disabled: boolean;
 }
 
-export interface OutputFilesTemplateControlProps {
+export interface OutputFilesControlProps {
     onDelete: () => void,
     onEdit: () => void,
     isChecked: boolean,
@@ -160,4 +171,12 @@ export interface FileContentProps {
     fileState: FileStateType;
     setFileState: React.Dispatch<React.SetStateAction<FileStateType>>;
     setDisabled: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export interface SettingCardProps {
+    title: string;
+    steps: TourProps['steps'];
+    children: React.ReactNode;
+    tourOpen: boolean;
+    setTourOpen: (open: boolean) => void;
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import PatchingTemplate from './PatchingTemplate';
 import PatchingBasicInformation from './PatchingBasicInformation';
@@ -8,13 +8,10 @@ import PatchingControl from './PatchingControl';
 import PatchingDescription from './PatchingDescription';
 import PatchingFileInfo, { getFileName } from './PatchingFileInfo';
 import AppPageTitle from '../../../../ui/AppPageTitle';
-import AppAlert from '../../../../ui/AppAlert';
-import useServiceAccessHistory from '../../../../util/hooks/useServiceAccessHistory';
-import useElectronStore from '../../../../util/hooks/useElectronStore';
 import useFileSystem from '../../../../util/hooks/useFileSystem';
+import useValidateSetting from '../../../../util/hooks/useValidateSetting';
+import useSetting from '../../../../util/hooks/useSetting';
 import { path } from '../../../../util/const/path';
-import { PATCHING } from '../../../../util/const/setting';
-import { NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE } from '../../../../util/const/message';
 import { PatchingFile, } from '../../../../util/interface/pages';
 
 const patchingFileInitialState: PatchingFile = {
@@ -32,44 +29,17 @@ const patchingFileInitialState: PatchingFile = {
 
 const PatchingGeneratePage: React.FC = () => {
 
-    useServiceAccessHistory({log: true});
     const [state, setState] = useState<PatchingFile>(patchingFileInitialState);
     const [outputPath, setOutputPath] = useState(null);
-    const [messages, setMessages] = useState([]);
     const navigate = useNavigate();
 
-    const { electronStore } = useElectronStore();
+    const { patchingSetting } = useSetting();
     const { fs, isLoading, error } = useFileSystem();
+    const { appAlert } = useValidateSetting();
 
     useEffect(() => {
-        (async () => {
-
-            // Get template directory path and Set
-            const templatePath = await electronStore.get(PATCHING.TEMPLATE_DIRECTORY_PATH_KEY);
-            if (!templatePath) {
-                setMessages([[NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE.title,
-                NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE.description]]);
-                return;
-            }
-
-            // Get output default path and Set
-            let outputPath: string;
-            const defaultOutputPath = await electronStore.get(PATCHING.DEFAULT_OUTPUT_DIRECTORY_PATH_KEY);
-            if (!defaultOutputPath) {
-                setMessages([NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE.title,
-                NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE.description]);
-                return;
-            }
-            outputPath = defaultOutputPath as string;
-
-            // If exists custom output path, then get and set.
-            const customOutputPath = await electronStore.get(PATCHING.OUTPUT_DIRECTORY_PATH_KEY);
-            if (customOutputPath) {
-                outputPath = customOutputPath as string;
-            }
-            setOutputPath(outputPath);
-        }
-        )();
+        patchingSetting.getCurrentOutputDirectoryPath()
+            .then(path => path && setOutputPath(path));
     }, []);
 
     const onGenerateHandler = async () => {
@@ -77,9 +47,9 @@ const PatchingGeneratePage: React.FC = () => {
 
         // description
         const modifiedDescription = state.description
-                .split('\n')
-                .map(line => `--${line}`)
-                .join('\n');
+            .split('\n')
+            .map(line => `--${line}`)
+            .join('\n');
 
         // description + sql
         const content = modifiedDescription + '\n\n' + state.sql
@@ -146,13 +116,7 @@ const PatchingGeneratePage: React.FC = () => {
             <AppPageTitle>Generate Sql File</AppPageTitle>
 
             {/* alert component */}
-            <AppAlert
-                messages={messages}
-                type="warning"
-                closable={true}
-                showIcon={true}
-                action={<Link to={path.setting}>go setting</Link>}
-            />
+            {appAlert}
 
             {/* template component */}
             <PatchingTemplate setState={setState} />

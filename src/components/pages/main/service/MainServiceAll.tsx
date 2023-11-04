@@ -1,10 +1,10 @@
 
-import VirtualList from 'rc-virtual-list';
-import { List } from 'antd';
-import { ServiceInformation } from '../../../util/interface/main';
-import { serviceInformations } from '../../../util/const/service';
-import { CodeSandboxOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import { List } from 'antd';
+import VirtualList from 'rc-virtual-list';
+import { CodeSandboxOutlined } from '@ant-design/icons';
+import { serviceInformations } from '../../../util/const/service';
+import { ServiceInformation } from '../../../util/interface/pages';
 
 const getIcon = (parentCategory: string) => {
     if (parentCategory == 'Sql') {

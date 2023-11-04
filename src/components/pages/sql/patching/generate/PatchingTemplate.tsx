@@ -5,6 +5,7 @@ import useMessage from '../../../../util/hooks/useMessage';
 import useTemplate from '../../../../util/hooks/useTemplate';
 import { path } from '../../../../util/const/path';
 import type { PatchingTemplateProps, TemplateIndex } from '../../../../util/interface/pages';
+import { TemplateListType } from '../../../../util/interface/common';
 
 const PatchingTemplate: React.FC<PatchingTemplateProps> = ({ setState }) => {
 
@@ -13,7 +14,7 @@ const PatchingTemplate: React.FC<PatchingTemplateProps> = ({ setState }) => {
     const [value, setValue] = useState<string>();
     const [enteredValue, setEnteredValue] = useState<string>();
     const { message, contextHolder } = useMessage()
-    const { templateIndexManager, templateManager } = useTemplate();
+    const { templateIndexManager, templateManager, templateListManager } = useTemplate();
 
     // First, get template index.
     useEffect(() => {
@@ -29,13 +30,13 @@ const PatchingTemplate: React.FC<PatchingTemplateProps> = ({ setState }) => {
 
         const searchData = setTimeout(() => {
 
-            if (!enteredValue || !templateIndex || Object.keys(templateIndex.template_title_index).length === 0) {
+            if (!enteredValue || !templateIndex || Object.keys(templateIndex.title_index).length === 0) {
                 return;
             }
 
             const templateItemSet: SelectProps['options'] = [];
 
-            const titleIndex = templateIndex.template_title_index;
+            const titleIndex = templateIndex.title_index;
             Object.keys(titleIndex).forEach(title => {
                 if (title.includes(enteredValue)) {
                     templateItemSet.push({
@@ -55,17 +56,17 @@ const PatchingTemplate: React.FC<PatchingTemplateProps> = ({ setState }) => {
         }
     }, [enteredValue]);
 
-    const handleChange = async (templateTitle: string) => {
+    const onChange = async (title: string) => {
 
-        setValue(templateTitle);
+        setValue(title);
+        const key = templateIndex.title_index[title];
+        const template = await templateManager.get(key);
+        if (!template) {
 
-        const result = await templateManager.search(templateTitle);
-        if (!result.exists) {
-
-            templateIndexManager.remove(templateTitle)
+            templateIndexManager.remove(key, "title_index")
             setTemplateIndex(preState => {
                 const index = { ...preState };
-                delete index.template_title_index[templateTitle];
+                delete index.title_index[title];
                 return { ...index };
             });
 
@@ -76,7 +77,6 @@ const PatchingTemplate: React.FC<PatchingTemplateProps> = ({ setState }) => {
             return;
         }
 
-        const template = result.data;
         setState(preState => ({
             ...preState,
             ...template
@@ -96,7 +96,7 @@ const PatchingTemplate: React.FC<PatchingTemplateProps> = ({ setState }) => {
                     suffixIcon={null}
                     filterOption={false}
                     onSearch={setEnteredValue}
-                    onChange={handleChange}
+                    onChange={onChange}
                     notFoundContent={null}
                     options={(data || []).map((d) => ({
                         value: d.value,

@@ -2,12 +2,7 @@
 // https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
 import { contextBridge } from 'electron';
 import * as preloadHandlers from './node_handler/preloadHandlers';
-
-type ElectronAPI = {
-    sendReadFileRequest: typeof preloadHandlers.sendReadFileRequest;
-    sendWriteFileRequest: typeof preloadHandlers.sendWriteFileRequest;
-    sendDeleteFileRequest: typeof preloadHandlers.sendDeleteFileRequest;
-    sendListFilesRequest: typeof preloadHandlers.sendListFilesRequest;
-};
+// eslint-disable-next-line import/no-unresolved
+import { ElectronAPI } from './types/global';
 
 contextBridge.exposeInMainWorld('electron', preloadHandlers as ElectronAPI);

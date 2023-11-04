@@ -1,67 +1,76 @@
-import { useEffect, useState } from "react";
-import useElectronStore from "./useElectronStore";
 import useFileSystem from "./useFileSystem";
-import { PATCHING } from "../const/setting";
-import { TemplateListType, TemplateType } from "../interface/common";
+import { TemplateListType, TemplateType, IFTemplateList } from "../interface/common";
+import useSetting from "./useSetting";
+import { RETURN } from "../const/result";
 
 export type TemplateIndexType = {
-    template_title_index: {
+    title_index: {
         [title: string]: string
     },
 }
 
 const useTemplate = () => {
     const { fs } = useFileSystem();
-    const { electronStore } = useElectronStore();
-    // const [templateDirectoryPath, setTemplateDirectoryPath] = useState<string>();
-    const [templateIndexFilePath, setTemplateIndexFilePath] = useState<string>();
-    const [templateListFilePath, setTemplateListFilePath] = useState<string>();
-
-    useEffect(() => {
-        (async () => {
-            // setTemplateDirectoryPath(await electronStore.get(PATCHING.TEMPLATE_DIRECTORY_PATH_KEY));
-            setTemplateIndexFilePath(await electronStore.get(PATCHING.TEMPLATE_INDEX_FILE_PATH_KEY));
-            setTemplateListFilePath(await electronStore.get(PATCHING.TEMPLATE_LIST_FILE_PATH_KEY));
-        })();
-    }, []);
+    const { patchingSetting } = useSetting();
 
     const createTemplateListManager = () => {
 
         const get = async () => {
-            const path = await electronStore.get(PATCHING.TEMPLATE_LIST_FILE_PATH_KEY);
+            const path = await patchingSetting.getTemplateListFilePath();
             if (!path) {
                 return;
             }
             const file = await fs.readFile(path);
-            return JSON.parse(file) as TemplateListType[];
+            return JSON.parse(file) as IFTemplateList;
         }
 
-        const add = async (listObj: TemplateListType) => {
-            const templateList = await get();
-            templateList.push(listObj);
-            await fs.writeFile(templateListFilePath, JSON.stringify(templateList, null, 2));
+        const getByKey =async (key: string) => {
+            const path = await patchingSetting.getTemplateListFilePath();
+            if (!path) {
+                return;
+            }
+            const file = await fs.readFile(path);
+            const list = JSON.parse(file) as IFTemplateList;
+            return list[key];
         }
 
-        const update = async (listObj: TemplateListType) => {
-            const templateList = await get();
-            const index = templateList.findIndex(item => item.key === listObj.key);
-            templateList[index] = listObj;
-            await fs.writeFile(templateListFilePath, JSON.stringify(templateList, null, 2));
+        const add = async (key: string, listObj: TemplateListType) => {
+            const path = await patchingSetting.getTemplateListFilePath();
+            if (!path) {
+                return;
+            }
+            const templateList = await get() as IFTemplateList;
+            templateList[key] = listObj;
+            await fs.writeFile(path, JSON.stringify(templateList, null, 2));
+            return key;
+        }
+
+        const update = async (key: string, listObj: TemplateListType) => {
+            const path = await patchingSetting.getTemplateListFilePath();
+            if (!path) {
+                return;
+            }
+            const templateList = await get() as IFTemplateList;
+            templateList[key] = listObj;
+            await fs.writeFile(path, JSON.stringify(templateList, null, 2));
         }
 
         const remove = async (key: string) => {
-            const templateList = await get();
-            const index = templateList.findIndex(item => item.key === key);
-            templateList.splice(index, 1);
-            await fs.writeFile(templateListFilePath, JSON.stringify(templateList, null, 2));
+            const path = await patchingSetting.getTemplateListFilePath();
+            if (!path) {
+                return;
+            }
+            const templateList = await get() as IFTemplateList;
+            delete templateList[key];
+            await fs.writeFile(path, JSON.stringify(templateList, null, 2));
         }
 
-        return { get, add, update, remove }
+        return { get, getByKey, add, update, remove }
     }
 
     const createTemplateIndexManager = () => {
         const get = async () => {
-            const path = await electronStore.get(PATCHING.TEMPLATE_INDEX_FILE_PATH_KEY);
+            const path = await patchingSetting.getTemplateIndexFilePath();
             if (!path) {
                 return;
             }
@@ -70,18 +79,31 @@ const useTemplate = () => {
         }
 
         const add = async (indexObj: { [fileName: string]: string }) => {
+            const path = await patchingSetting.getTemplateIndexFilePath();
+            if (!path) {
+                return;
+            }
             const templateIndex = await get() as TemplateIndexType;
-            templateIndex.template_title_index = {
-                ...templateIndex.template_title_index,
+            templateIndex.title_index = {
+                ...templateIndex.title_index,
                 ...indexObj
             }
-            await fs.writeFile(templateIndexFilePath, JSON.stringify(templateIndex, null, 2));
+            await fs.writeFile(path, JSON.stringify(templateIndex, null, 2));
         }
 
-        const remove = async (title: string) => {
+        const remove = async (title: string, type: "title_index") => {
+            const path = await patchingSetting.getTemplateIndexFilePath();
+            if (!path) {
+                return;
+            }
             const templateIndex = await get() as TemplateIndexType;
-            delete templateIndex.template_title_index[title];
-            await fs.writeFile(templateIndexFilePath, JSON.stringify(templateIndex, null, 2));
+            console.log(templateIndex)
+            console.log(type)
+            console.log(title)
+            console.log(templateIndex[type][title])
+            delete templateIndex[type][title];
+            console.log(templateIndex)
+            await fs.writeFile(path, JSON.stringify(templateIndex, null, 2));
         }
 
         return { get, add, remove }
@@ -89,12 +111,13 @@ const useTemplate = () => {
 
     const createTemplateManager = () => {
 
-        const get = async (fileName: string) => {
-            const path = await electronStore.get(PATCHING.TEMPLATE_DIRECTORY_PATH_KEY);
+        const get = async (key: string) => {
+            const path = await patchingSetting.getTemplateDirectoryPath();
             if (!path) {
                 return;
             }
-            const filePath = `${path}/${fileName}`;
+            const templateList = await templateListManager.getByKey(key) as TemplateListType;
+            const filePath = `${path}/${templateList.fileName}`;
             const exists = await fs.start(filePath);
             if (!exists) {
                 return;
@@ -104,89 +127,77 @@ const useTemplate = () => {
         }
 
         const create = async (templateObj: TemplateType) => {
-            const path = await electronStore.get(PATCHING.TEMPLATE_DIRECTORY_PATH_KEY);
+            const path = await patchingSetting.getTemplateDirectoryPath();
+            if (!path) {
+                return;
+            }
             const fileName = `${templateObj.applier}_${templateObj.checker}_${templateObj.tableName}_${templateObj.action}.${templateObj.extension}`;
             await fs.writeFile(`${path}/${fileName}`, JSON.stringify(templateObj, null, 2));
             return {
-                exists: true,
-                path: path,
+                path,
                 fileName,
-            }; // return template file path.
+            };
         }
 
-        const update = async (fileName: string, templateObj: TemplateType) => {
-            const path = await electronStore.get(PATCHING.TEMPLATE_DIRECTORY_PATH_KEY);
-            return await fs.writeFile(`${path}/${fileName}`, JSON.stringify(templateObj, null, 2));
+        const update = async (key: string, templateObj: TemplateType) => {
+            const path = await patchingSetting.getTemplateDirectoryPath();
+            if (!path) {
+                return;
+            }
+            const templateList = await templateListManager.getByKey(key) as TemplateListType;
+            const filePath = `${path}/${templateList.fileName}`;
+            return await fs.writeFile(filePath, JSON.stringify(templateObj, null, 2));
         }
 
-        const remove = async (fileName: string) => {
-            const path = await electronStore.get(PATCHING.TEMPLATE_DIRECTORY_PATH_KEY);
-            return await fs.unlink(`${path}/${fileName}`);
+        const remove = async (key: string) => {
+            const path = await patchingSetting.getTemplateDirectoryPath();
+            if (!path) {
+                return;
+            }
+            const templateList = await templateListManager.getByKey(key) as TemplateListType;
+            const filePath = `${path}/${templateList.fileName}`;
+            return await fs.unlink(filePath);
         }
 
         const search = async (title: string) => {
-            const templateIndex = await templateIndexManager.get();
-            const fileName = templateIndex.template_title_index[title];
-            if (!fileName) {
-                return {
-                    exists: false,
-                    message: "Not Found Template(No Index)",
-                    data: null,
-                }
+            const output = {
+                exists: false,
+                template: null as TemplateType,
+            }
+            const index = await templateIndexManager.get();
+            if (!index) {
+                return RETURN.FAILURE(output, "Not Found Template(No Index)")
             }
 
-            const path = await electronStore.get(PATCHING.TEMPLATE_DIRECTORY_PATH_KEY);
+            const key = index.title_index[title];
+            if (!key) {
+                return RETURN.FAILURE(output, "Not Found Template(No Index)")
+            }
+
+            const path = await patchingSetting.getTemplateDirectoryPath();
+            if (!path) {
+                return RETURN.FAILURE(output, "Not Found Template(No Path)")
+            }
+
+            const templateList = await templateListManager.get() as IFTemplateList;
+            const fileName = templateList[key].fileName;
             const exists = await fs.start(`${path}/${fileName}`);
             if (!exists) {
-                return {
-                    exists: false,
-                    message: "Not Found Template(No File)",
-                    data: null,
-                }
+                return RETURN.FAILURE(output, "Not Found Template(No File)")
             }
 
-            return {
-                exists: true,
-                message: "Found Template",
-                data: await get(fileName),
-            }
+            output.template = await get(fileName);
+            return RETURN.SUCCESS(output, "Found Template");
         }
 
         return { get, create, update, remove, search }
     }
 
-    const createSettingManager = () => {
-        return {
-            getWorkspacePath:async () => {
-                return await electronStore.get(PATCHING.WORKSPACE_PATH_KEY);
-            },
-            getTemplateDirectoryPath: async () => {
-                return await electronStore.get(PATCHING.TEMPLATE_DIRECTORY_PATH_KEY);
-            },
-            setTemplateDirectoryPath: async (path: string) => {
-                await electronStore.set(PATCHING.TEMPLATE_DIRECTORY_PATH_KEY, path);
-            },
-            getTemplateIndexFilePath: async () => {
-                return await electronStore.get(PATCHING.TEMPLATE_INDEX_FILE_PATH_KEY);
-            },
-            setTemplateIndexFilePath: async (path: string) => {
-                await electronStore.set(PATCHING.TEMPLATE_INDEX_FILE_PATH_KEY, path);
-            },
-            getTemplateListFilePath: async () => {
-                return await electronStore.get(PATCHING.TEMPLATE_LIST_FILE_PATH_KEY);
-            },
-            setTemplateListFilePath: async (path: string) => {
-                await electronStore.set(PATCHING.TEMPLATE_LIST_FILE_PATH_KEY, path);
-            },
-        }
-    }
-
     const templateListManager = createTemplateListManager();
     const templateIndexManager = createTemplateIndexManager();
     const templateManager = createTemplateManager();
-    const templateSettingManager = createSettingManager();
 
-    return { templateListManager, templateIndexManager, templateManager, templateSettingManager };
+    return { templateListManager, templateIndexManager, templateManager };
 }
 
 export default useTemplate;

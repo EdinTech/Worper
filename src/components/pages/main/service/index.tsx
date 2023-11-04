@@ -30,7 +30,7 @@ const MainService = () => {
     return (
         <>
             <Card
-                style={{ width: '100%', height: '450px', marginBottom: 16 }}
+                style={{ width: '100%', height: '90%', marginBottom: 16 }}
                 title="Services"
                 tabList={tabList}
                 activeTabKey={activeTabKey}

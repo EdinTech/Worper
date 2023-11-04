@@ -1,4 +1,4 @@
-import { ServiceInformation } from "../interface/main";
+import { ServiceInformation } from "../interface/pages";
 import { path } from "./path";
 
 export const serviceInformations: ServiceInformation[] = [
@@ -29,5 +29,5 @@ export const serviceInformations: ServiceInformation[] = [
         description: 'Output Files for Patching',
         path: path.patchingOutputFile,
         parentCategory: 'Sql'
-    },
+    }
 ];

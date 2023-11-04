@@ -105,7 +105,21 @@ const useFileSystem = () => {
             }
         }
 
-        return { createFile, writeFile, readFile, unlink, readdir, start, mkdir, stat, rename }
+        const createDirectoryIfNotExists = async (directoryPath: string) => {
+            if (await start(directoryPath)) {
+                return true;
+            }
+            return await mkdir(directoryPath);
+        }
+
+        const createFileIfNotExists = async (filePath: string, content: object) => {
+            if (await start(filePath)) {
+                return true;
+            }
+            await writeFile(filePath, JSON.stringify(content, null, 2));
+        }
+
+        return { createFile, writeFile, readFile, unlink, readdir, start, mkdir, stat, rename, createDirectoryIfNotExists, createFileIfNotExists }
     }
 
     const fs = createFileSystem();

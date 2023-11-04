@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Dropdown, Space, Typography, Modal } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { OutputFilesTemplateControlProps } from '../../../../util/interface/pages';
+import { OutputFilesControlProps } from '../../../../util/interface/pages';
 
 const { Text } = Typography;
 
@@ -13,7 +13,7 @@ const config = {
     ),
 };
 
-const TemplateControl: React.FC<OutputFilesTemplateControlProps> = ({ isChecked, isValidated, selectedFileLength, onDelete, onEdit }) => {
+const OutputFileControl: React.FC<OutputFilesControlProps> = ({ isChecked, isValidated, selectedFileLength, onDelete, onEdit }) => {
 
     const [modal, contextHolder] = Modal.useModal();
 
@@ -54,4 +54,4 @@ const TemplateControl: React.FC<OutputFilesTemplateControlProps> = ({ isChecked,
     )
 }
 
-export default TemplateControl;
+export default OutputFileControl;

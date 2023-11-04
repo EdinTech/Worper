@@ -1,29 +1,27 @@
-import AppPageTitle from "../../ui/AppPageTitle";
-import SettingPatchingSql from "./patching-sql";
-import { AppAlert as alertType } from "../../util/interface/pages";
 import { useEffect, useState } from "react";
+import useStore from "../../util/hooks/useStore";
+import SettingPatchingSql from "./patching-sql";
+import AppPageTitle from "../../ui/AppPageTitle";
 import AppAlert from "../../ui/AppAlert";
-import useElectronStore from "../../util/hooks/useElectronStore";
-import { PATCHING } from "../../util/const/setting";
 import { NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE } from "../../util/const/message";
+import { PATCHING } from "../../util/const/setting";
+import SettingPatchingSqlDetail from "./patching-sql-detail";
 
 const SettingPage = () => {
 
     const [alertMessages, setAlertMessages] = useState<[string, string][]>([]);
-    const { electronStore } = useElectronStore();
-
-    const alert: alertType = (title, message) => {
-        setAlertMessages(messages => [...messages, [title, message]]);
-    }
+    const { store } = useStore();
 
     useEffect(() => {
         (async () => {
-            const settingDefaultValue = await electronStore.get(PATCHING.WORKSPACE_PATH_KEY);
-            if (!settingDefaultValue) {
-                alert(NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE.title,
-                    NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE.description);
+            // If exists workspace path, do nothing.
+            if (await store.get(PATCHING.WORKSPACE_PATH_KEY, "string")) {
+                return;
             }
-
+            setAlertMessages(prevState => [
+                ...prevState,
+                [NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE.title, NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE.description]
+            ])
         })();
     }, []);
 
@@ -37,6 +35,8 @@ const SettingPage = () => {
                 showIcon={true}
             />
             <SettingPatchingSql />
+
+            <SettingPatchingSqlDetail />
         </>
     )
 }

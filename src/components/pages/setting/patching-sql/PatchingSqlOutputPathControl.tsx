@@ -1,35 +1,38 @@
 import { useEffect, useState } from "react";
 import { Space, Button, Form, Input } from 'antd';
-import useElectronStore from "../../../util/hooks/useElectronStore";
 import useFileSystem from "../../../util/hooks/useFileSystem";
 import useMessage from "../../../util/hooks/useMessage";
 import { validateMessages } from "../../../util/const/validate";
-import { PATCHING } from "../../../util/const/setting";
+import useSetting from "../../../util/hooks/useSetting";
 
 const layout = {
     labelCol: { span: 6 },
     wrapperCol: { span: 16 },
 };
 
-const PSOutputPathControl: React.FC = () => {
+const PatchingSqlOutputPathControl: React.FC = () => {
     const [disable, setDisable] = useState(false);
-    const [path, setPath] = useState('');
+    const [outputPath, setOutputPath] = useState('');
     const { fs, isLoading } = useFileSystem();
     const { message, contextHolder } = useMessage();
 
-    const { electronStore } = useElectronStore();
+    const { patchingSetting } = useSetting();
 
     useEffect(() => {
 
         (async () => {
-            const settingOutputPath = await electronStore.get(PATCHING.OUTPUT_DIRECTORY_PATH_KEY);
-            if (settingOutputPath) {
-                setPath(settingOutputPath);
+            const value = await patchingSetting.getOutputDirectoryPath();
+            if (value) {
+                setOutputPath(value);
                 setDisable(true);
             }
         })();
 
     }, []);
+
+    const onInputOutputPath = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setOutputPath(e.currentTarget.value);
+    }
 
     const onClickButton = async() => {
 
@@ -38,22 +41,20 @@ const PSOutputPathControl: React.FC = () => {
             return;
         }
 
-        if (path.trim().length === 0) {
-            electronStore.delete(PATCHING.OUTPUT_DIRECTORY_PATH_KEY);
-            setPath(path);
+        if (outputPath.trim().length === 0) {
+            patchingSetting.removeOutputDirectoryPath()
             message.success("Directory deleted.");
             return;
         }
 
         // set template path
-        const existsDirectory = await fs.start(path);
+        const existsDirectory = await fs.start(outputPath);
         if (!existsDirectory) {
             message.error("No find Directory.")
             return;
         }
-        electronStore.set(PATCHING.OUTPUT_DIRECTORY_PATH_KEY, path);
+        patchingSetting.setOutputDirectoryPath(outputPath)
 
-        setPath(path);
         setDisable(true);
         message.success("Directory saved.");
     }
@@ -63,19 +64,19 @@ const PSOutputPathControl: React.FC = () => {
             {contextHolder}
             <Form
                 {...layout}
-                style={{ maxWidth: 500 }}
+                style={styles.form}
                 validateMessages={validateMessages}
             >
                 <Form.Item label="Output path">
-                    <Space direction="horizontal" style={{ width: '100%' }}>
+                    <Space direction="horizontal" style={styles.space}>
                         <Input
-                            style={{ minWidth: 400 }}
+                            style={styles.input}
                             disabled={disable}
-                            onInput={(e) => setPath(e.currentTarget.value)}
-                            value={path}
+                            onInput={onInputOutputPath}
+                            value={outputPath}
                         />
-                        {isLoading && <Button style={{ width: 80 }} loading></Button>}
-                            {!isLoading && <Button style={{ width: 80 }} onClick={onClickButton}>{disable ? 'Edit' : 'Save'}</Button>}
+                        {isLoading && <Button style={styles.button} loading></Button>}
+                            {!isLoading && <Button style={styles.button} onClick={onClickButton}>{disable ? 'Edit' : 'Save'}</Button>}
                     </Space>
                 </Form.Item>
             </Form>
@@ -83,4 +84,19 @@ const PSOutputPathControl: React.FC = () => {
     )
 }
 
-export default PSOutputPathControl;
+export default PatchingSqlOutputPathControl;
+
+const styles = {
+    form: {
+        maxWidth: 500
+    },
+    space: {
+        width: '100%'
+    },
+    input: {
+        minWidth: 400
+    },
+    button: {
+        width: 80
+    }
+}

@@ -19,10 +19,11 @@ export const PATCHING = {
     SETTING_FILE_NAME: 'setting.json',
     // setting file content
     INITIAL_SETTING_FILE_CONTENT: {
-        default_applicant: "",
-        default_checker: "小林",
-        members: ["神野", "杉浦", "小林", "カン", "パク", "情シス開発保守運用2"],
+        default_applicant: "USER",
+        default_checker: "USER1",
+        members: ["USER1", "USER2"],
         action: ["データ変更", "追加", "リカバリー", "論理削除"],
+        action_auto_saving: "on",
         table_name: {
             "entry": "申込データ",
             "payment": "精算データ",
@@ -40,8 +41,8 @@ export const PATCHING = {
     TEMPLATE_INDEX_FILE_NAME: 'template_index.json',
     // template index file content
     INITIAL_TEMPLATE_INDEX_FILE_CONTENT: {
-        template_title_index: {
-            "テンプレート1": "ex1.json",
+        title_index: {
+            "テンプレート1": "1",
         },
     },
     // template list file key
@@ -49,15 +50,15 @@ export const PATCHING = {
     // template list file name
     TEMPLATE_LIST_FILE_NAME: 'template_list.json',
     // template list file content
-    INITIAL_TEMPLATE_LIST_FILE_CONTENT: [
-        {
+    INITIAL_TEMPLATE_LIST_FILE_CONTENT: {
+        "1": {
             key: '1',
-            template: 'テンプレート1',
-            description: 'New York No. 1 Lake Park',
-            file: 'ex1.json',
+            templateTitle: 'テンプレート1',
+            description: 'Sample file',
+            fileName: 'ex1.json',
             createdAt: "2023-10-25T22:05:09+09:00"
         },
-    ],
+    },
     // example template file name
     EXAMPLE_TEMPLATE_FILE_NAME: 'ex1.json',
     // example template file content

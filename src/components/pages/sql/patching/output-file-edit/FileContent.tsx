@@ -1,32 +1,27 @@
+import { useEffect, useState } from "react";
 import { Card, Form, Input, Modal, Descriptions, Space, Button } from "antd";
 import { FileContentProps } from "../../../../util/interface/pages";
 import TextArea from "antd/es/input/TextArea";
 import useFileSystem from "../../../../util/hooks/useFileSystem";
-import { useEffect, useState } from "react";
-import useElectronStore from "../../../../util/hooks/useElectronStore";
-import { PATCHING } from "../../../../util/const/setting";
 import { ExclamationCircleOutlined, CopyOutlined } from "@ant-design/icons";
 import useMessage from "../../../../util/hooks/useMessage";
+import useSetting from "../../../../util/hooks/useSetting";
 
 
 const FileContent: React.FC<FileContentProps> = ({ fileState, setFileState, setDisabled }) => {
 
     const { fs } = useFileSystem();
-    const { electronStore } = useElectronStore();
     const { message, contextHolder } = useMessage();
     const [fileNames, setFileNames] = useState<string[]>();
     const [existsFileName, setExistsFileName] = useState(false);
+    const { patchingSetting } = useSetting();
     useEffect(() => {
         (async () => {
-            let outputPath = await electronStore.get(PATCHING.DEFAULT_OUTPUT_DIRECTORY_PATH_KEY)
-            if (!outputPath) {
+            const path = await patchingSetting.getCurrentOutputDirectoryPath();
+            if (!path) {
                 return;
             }
-            const customOutputPath = await electronStore.get(PATCHING.OUTPUT_DIRECTORY_PATH_KEY);
-            if (customOutputPath) {
-                outputPath = customOutputPath;
-            }
-            fs.readdir(outputPath).then(setFileNames);
+            fs.readdir(path).then(setFileNames);
         })();
     }, [])
 
