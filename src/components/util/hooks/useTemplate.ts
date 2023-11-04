@@ -97,12 +97,7 @@ const useTemplate = () => {
                 return;
             }
             const templateIndex = await get() as TemplateIndexType;
-            console.log(templateIndex)
-            console.log(type)
-            console.log(title)
-            console.log(templateIndex[type][title])
             delete templateIndex[type][title];
-            console.log(templateIndex)
             await fs.writeFile(path, JSON.stringify(templateIndex, null, 2));
         }
 

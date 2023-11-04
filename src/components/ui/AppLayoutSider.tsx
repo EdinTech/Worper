@@ -20,7 +20,7 @@ const items: MenuItem[] = [
             getItem('Output', path.patchingOutputFile),
         ]),
     ]),
-    getItem('Test', path.test),
+    // getItem('Test', path.test),
 ];
 
 const bottomItems: MenuItem[] = [

@@ -38,6 +38,7 @@ const PatchingOutputFilePage = () => {
     const onDelete = () => {
         selectedFilePaths.forEach(filePath => {
             setFiles(prevState => (prevState?.filter(file => file.key !== filePath)));
+            setFilteredFiles(prevState => (prevState?.filter(file => file.key !== filePath)));
             fs.unlink(filePath);
         });
         message.success("deleted!");

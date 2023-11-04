@@ -74,11 +74,12 @@ const PatchingTemplatePage: React.FC = () => {
     }
 
     const onDelete = () => {
-        templateListManager.remove(templateItem.key);
-        templateIndexManager.remove(templateItem.key, "title_index");
-        templateManager.remove(templateItem.key);
-        const filteredTemplates = templateItems?.filter(v => v.key != templateItem.key);
-        setTemplateItems(filteredTemplates)
+        const keyToDelete = templateItem.key;
+        templateManager.remove(keyToDelete);
+        templateListManager.remove(keyToDelete);
+        templateIndexManager.remove(templateItem.templateTitle, "title_index");
+        setTemplateItems(prevState => (prevState.filter(v => v.key != keyToDelete)));
+        setFilteredTemplate(prevState => (prevState.filter(v => v.key != keyToDelete)));
         setIsChecked(false);
     }
 
