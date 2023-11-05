@@ -11,17 +11,24 @@ import PatchingOutputFilePage from './components/pages/sql/patching/output-file'
 import PatchingOutputFileEditPage from './components/pages/sql/patching/output-file-edit';
 import SettingPage from './components/pages/setting';
 import TestPage from './components/pages/test';
+import SearchingSqlPage from './components/pages/sql/searching/sql';
+import SearchingSqlModifyPage from './components/pages/sql/searching/sql-modify';
 
 const routes = [
-    { path: path.main, element: <MainPage /> },
+    { path: path.main, element: <PatchingTemplatePage /> },
+    // sql > patching
     { path: path.patchingGenerate, element: <PatchingGeneratePage /> },
     { path: path.patchingGenerateResult, element: <PatchingGenerateResultPage /> },
     { path: path.patchingTemplate, element: <PatchingTemplatePage />},
     { path: path.patchingTemplateModify, element: <PatchingTemplateModifyPage />},
     { path: path.patchingOutputFile, element: <PatchingOutputFilePage />},
     { path: path.patchingOutputFileEdit, element: <PatchingOutputFileEditPage />},
+    // sql > searching
+    { path: path.searchingSql, element: <SearchingSqlPage/>},
+    { path: path.searchingSqlModify, element: <SearchingSqlModifyPage/>},
+    // setting
     { path: path.setting, element: <SettingPage />},
-    // { path: path.test, element: <TestPage />}
+    { path: path.test, element: <TestPage />}
 ];
 
 const router = createBrowserRouter([

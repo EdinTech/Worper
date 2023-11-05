@@ -5,7 +5,8 @@ import useMessage from '../../../../util/hooks/useMessage';
 import useTemplate from '../../../../util/hooks/useTemplate';
 import { path } from '../../../../util/const/path';
 import type { PatchingTemplateProps, TemplateIndex } from '../../../../util/interface/pages';
-import { TemplateListType } from '../../../../util/interface/common';
+
+const term = 300;
 
 const PatchingTemplate: React.FC<PatchingTemplateProps> = ({ setState }) => {
 
@@ -14,7 +15,7 @@ const PatchingTemplate: React.FC<PatchingTemplateProps> = ({ setState }) => {
     const [value, setValue] = useState<string>();
     const [enteredValue, setEnteredValue] = useState<string>();
     const { message, contextHolder } = useMessage()
-    const { templateIndexManager, templateManager, templateListManager } = useTemplate();
+    const { templateIndexManager, templateManager } = useTemplate();
 
     // First, get template index.
     useEffect(() => {
@@ -37,18 +38,19 @@ const PatchingTemplate: React.FC<PatchingTemplateProps> = ({ setState }) => {
             const templateItemSet: SelectProps['options'] = [];
 
             const titleIndex = templateIndex.title_index;
-            Object.keys(titleIndex).forEach(title => {
-                if (title.includes(enteredValue)) {
-                    templateItemSet.push({
-                        label: title,
-                        value: title
-                    })
-                }
-            });
+            Object.keys(titleIndex)
+                .forEach(title => {
+                    if (title.includes(enteredValue)) {
+                        templateItemSet.push({
+                            label: title,
+                            value: title
+                        })
+                    }
+                });
 
             setData(templateItemSet);
 
-        }, 300);
+        }, term);
 
         return () => {
             clearTimeout(searchData);

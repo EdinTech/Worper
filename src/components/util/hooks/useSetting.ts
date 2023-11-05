@@ -5,7 +5,7 @@ const useSetting = () => {
 
     const { store } = useStore();
 
-    const createPatchingSetting = () => {
+    const createSetting = () => {
 
         // workspace path
         const getWorkspacePath = async () => {
@@ -88,6 +88,14 @@ const useSetting = () => {
             return await store.set(PATCHING.TEMPLATE_LIST_FILE_PATH_KEY, path, "string")
         }
 
+        // sql directory path
+        const getSqlDirectoryPath = async () => {
+            return await store.get(PATCHING.SQL_DIRECTORY_PATH_KEY, "string")
+        }
+        const setSqlDirectoryPath = async (path: string) => {
+            return await store.set(PATCHING.SQL_DIRECTORY_PATH_KEY, path, "string")
+        }
+
         return {
             getWorkspacePath,
             setWorkspacePath,
@@ -106,12 +114,14 @@ const useSetting = () => {
             getTemplateIndexFilePath,
             setTemplateIndexFilePath,
             getTemplateListFilePath,
-            setTemplateListFilePath
+            setTemplateListFilePath,
+            getSqlDirectoryPath,
+            setSqlDirectoryPath
         }
     }
 
-    const patchingSetting = createPatchingSetting();
-    return { patchingSetting }
+    const setting = createSetting();
+    return { setting }
 }
 
 export default useSetting;

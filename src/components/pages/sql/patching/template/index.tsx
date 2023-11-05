@@ -1,34 +1,16 @@
-import AppPageTitle from '../../../../ui/AppPageTitle';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { Table } from 'antd';
+import AppPageTitle from '../../../../ui/AppPageTitle';
 import TemplateControl from './TemplateControl';
+import TemplateSearchInput from './TemplateSearchInput';
 import useTemplate from '../../../../util/hooks/useTemplate';
-import { useNavigate } from 'react-router-dom';
+import useValidateSetting from '../../../../util/hooks/useValidateSetting';
 import { path } from '../../../../util/const/path';
 import type { ColumnsType } from 'antd/es/table';
 import type { TemplateListType } from '../../../../util/interface/common';
-import useValidateSetting from '../../../../util/hooks/useValidateSetting';
-import TemplateSearchInput from './TemplateSearchInput';
-
-let timeout: ReturnType<typeof setTimeout> | null;
-
-const searchByKeyword = (keyword: string, list: TemplateListType[], callback: React.Dispatch<React.SetStateAction<TemplateListType[]>>) => {
-    if (timeout) {
-        clearTimeout(timeout);
-        timeout = null;
-    }
-
-    if (!keyword) {
-        callback(list);
-        return;
-    }
-
-    timeout = setTimeout(() => {
-        const newList = list.filter(v => v.templateTitle.includes(keyword))
-        callback(newList);
-    }, 300);
-}
+import TemplateDrawer from './TemplateDrawer';
 
 const PatchingTemplatePage: React.FC = () => {
 
@@ -36,6 +18,9 @@ const PatchingTemplatePage: React.FC = () => {
     const [filteredTemplates, setFilteredTemplate] = useState<TemplateListType[]>();
     const [templateItem, setTemplateItem] = useState<TemplateListType>();
     const { templateListManager, templateIndexManager, templateManager } = useTemplate();
+    const [currentRecord, setCurrentRecord] = useState<TemplateListType>();
+    const [open, setOpen] = useState(false);
+
     const { isValidated, appAlert } = useValidateSetting();
     const [isChecked, setIsChecked] = useState(false);
     const navigate = useNavigate();
@@ -61,14 +46,14 @@ const PatchingTemplatePage: React.FC = () => {
 
     const onCreate = () => {
         navigate(path.patchingTemplateModify, {
-            state: { value: null, type: 'create' }
+            state: { payload: null, mode: 'create' }
         });
         setIsChecked(false);
     }
 
     const onEdit = () => {
         navigate(path.patchingTemplateModify, {
-            state: { value: templateItem, type: 'modify' }
+            state: { payload: templateItem, mode: 'update' }
         });
         setIsChecked(false);
     }
@@ -82,7 +67,10 @@ const PatchingTemplatePage: React.FC = () => {
         setFilteredTemplate(prevState => (prevState.filter(v => v.key != keyToDelete)));
         setIsChecked(false);
     }
-
+    const onHandleDrawer = (record: TemplateListType) => {
+        setCurrentRecord(record);
+        setOpen(true)
+    }
     return (
         <>
             <AppPageTitle>Sql Templates</AppPageTitle>
@@ -100,8 +88,13 @@ const PatchingTemplatePage: React.FC = () => {
                     type: 'radio',
                     onChange: onChange,
                 }}
-                columns={columns}
+                columns={getColumn(onHandleDrawer)}
                 dataSource={filteredTemplates}
+            />
+            <TemplateDrawer
+                payload={currentRecord}
+                open={open}
+                onClose={() => setOpen(false)}
             />
         </>
     )
@@ -109,23 +102,45 @@ const PatchingTemplatePage: React.FC = () => {
 
 export default PatchingTemplatePage;
 
-const columns: ColumnsType<TemplateListType> = [
-    {
-        title: 'Template',
-        dataIndex: 'templateTitle',
-    },
-    {
-        title: 'Description',
-        dataIndex: 'description',
-    },
-    {
-        title: 'Created At',
-        dataIndex: 'createdAt',
-        render: (text: string) => dayjs(text).format('YYYY-MM-DD')
-    },
-    {
-        title: 'Created At',
-        dataIndex: 'updatedAt',
-        render: (text: string) => dayjs(text).format('YYYY-MM-DD')
+const getColumn = (onHandleDrawer: (record: unknown) => void) => {
+    return [
+        {
+            title: 'Template',
+            dataIndex: 'templateTitle',
+            render: (text, record) => <a onClick={() => onHandleDrawer(record)}>{text}</a>,
+        },
+        {
+            title: 'Description',
+            dataIndex: 'description',
+        },
+        {
+            title: 'Created At',
+            dataIndex: 'createdAt',
+            render: (text: string) => dayjs(text).format('YYYY-MM-DD HH:mm:ss')
+        },
+        {
+            title: 'Created At',
+            dataIndex: 'updatedAt',
+            render: (text: string) => dayjs(text).format('YYYY-MM-DD HH:mm:ss')
+        }
+    ] as ColumnsType<TemplateListType>;
+}
+
+let timeout: ReturnType<typeof setTimeout> | null;
+
+const searchByKeyword = (keyword: string, list: TemplateListType[], callback: React.Dispatch<React.SetStateAction<TemplateListType[]>>) => {
+    if (timeout) {
+        clearTimeout(timeout);
+        timeout = null;
     }
-];
+
+    if (!keyword) {
+        callback(list);
+        return;
+    }
+
+    timeout = setTimeout(() => {
+        const newList = list.filter(v => v.templateTitle.includes(keyword))
+        callback(newList);
+    }, 300);
+}

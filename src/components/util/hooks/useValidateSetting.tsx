@@ -9,12 +9,12 @@ const useValidateSetting = () => {
 
     const [appAlert, setAppAlert] = useState<React.ReactNode>(null);
     const [isValidated, setIsValidated] = useState(false);
-    const { patchingSetting } = useSetting();
+    const { setting } = useSetting();
 
     useEffect(() => {
         const settingPath = path.setting;
         (async () => {
-            const path = await patchingSetting.getWorkspacePath();
+            const path = await setting.getWorkspacePath();
             path ? setIsValidated(true) : setAppAlert(<AppAlert
                 messages={[[NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE.title, NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE.description]]}
                 type="warning"

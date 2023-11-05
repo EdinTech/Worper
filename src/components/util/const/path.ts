@@ -12,11 +12,10 @@ export const path = {
     patchingOutputFileEdit: "/sql/patching/output-files/edit",
 
     // slq > searching
-    searching: "/sql/searching",
-    searchingGet: "/sql/searching/get",
-    searchingEdit: "/sql/searching/edit",
-    searchingEditResult: "/sql/searching/edit/result",
-    searchingSetting: "/sql/searching/setting",
+    searchingSql: "/sql/searching-sql",
+    searchingSqlModify: "/sql/searching-sql/modify",
+
+    // setting
     setting: "/setting",
 
     test: "/test",

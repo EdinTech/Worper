@@ -19,6 +19,9 @@ const items: MenuItem[] = [
             getItem('Template', path.patchingTemplate),
             getItem('Output', path.patchingOutputFile),
         ]),
+        getItem('Searching', 'Searching', null, [
+            getItem('SQL Files', path.searchingSql),
+        ]),
     ]),
     // getItem('Test', path.test),
 ];

@@ -1,48 +1,43 @@
 import { useEffect, useState } from "react";
 import { Card, Form, Input, Modal, Descriptions, Space, Button } from "antd";
-import { FileContentProps } from "../../../../util/interface/pages";
+import { ExclamationCircleOutlined, CopyOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
 import useFileSystem from "../../../../util/hooks/useFileSystem";
-import { ExclamationCircleOutlined, CopyOutlined } from "@ant-design/icons";
 import useMessage from "../../../../util/hooks/useMessage";
-import useSetting from "../../../../util/hooks/useSetting";
+import { FileContentProps } from "../../../../util/interface/pages";
 
 
 const FileContent: React.FC<FileContentProps> = ({ fileState, setFileState, setDisabled }) => {
 
-    const { fs } = useFileSystem();
-    const { message, contextHolder } = useMessage();
-    const [fileNames, setFileNames] = useState<string[]>();
+    const [originFileName, setOriginFileName] = useState<string>();
     const [existsFileName, setExistsFileName] = useState(false);
-    const { patchingSetting } = useSetting();
+    const { message, contextHolder } = useMessage();
+    const { fs } = useFileSystem();
+
     useEffect(() => {
-        (async () => {
-            const path = await patchingSetting.getCurrentOutputDirectoryPath();
-            if (!path) {
-                return;
-            }
-            fs.readdir(path).then(setFileNames);
-        })();
+        setOriginFileName(fileState.name);
     }, [])
 
-    const checkExistsFileName = () => {
+    const checkExistsFileName = async () => {
 
-        if (!fileState.isChanged) {
+        if (!fileState.name) {
+            return;
+        }
+        if (originFileName === fileState.name) {
             return;
         }
 
-        if (!fileNames || fileNames.length === 0) {
-            return;
-        }
+        const exists = await fs.start(`${fileState.path}/${fileState.name}`);
+        setExistsFileName(exists);
+        setDisabled(exists);
+    }
 
-        if (fileState.originName !== fileState.name && fileNames.includes(fileState.name)) {
-            setExistsFileName(true);
-            setDisabled(true);
-            return;
-        }
+    const onChangeFileName = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFileState({ ...fileState, name: e.target.value, isChanged: true })
+    }
 
-        setExistsFileName(false);
-        setDisabled(false);
+    const onChangeFileContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setFileState({ ...fileState, content: e.target.value, isChanged: true })
     }
 
     const onCopyHandler = () => {
@@ -50,29 +45,30 @@ const FileContent: React.FC<FileContentProps> = ({ fileState, setFileState, setD
         message.success("Path copied!")
     }
 
-    const info = () => {
+    const openModal = () => {
         Modal.info({
             title: 'Detail',
             width: 800,
-            content: (
-                <>
-                    <Descriptions column={1} size='small' bordered
-                        items={[
-                            { key: 1, label: "path", children: <Space size="small">{fileState.path}<Button type="text" onClick={onCopyHandler} icon={<CopyOutlined />} /></Space> },
-                            { key: 2, label: "name", children: fileState.originName },
-                            { key: 3, label: 'created time', children: fileState.birthtime },
-                            { key: 5, label: "updated time", children: fileState.mtime },
-                        ]}
-                    />
-                </>
-            ),
+            content: (<>
+                <Descriptions
+                    column={1}
+                    size='small'
+                    bordered
+                    items={[
+                        { key: 1, label: "path", children: <Space size="small">{fileState.path}<Button type="text" onClick={onCopyHandler} icon={<CopyOutlined />} /></Space> },
+                        { key: 2, label: "name", children: fileState.originName },
+                        { key: 3, label: 'created time', children: fileState.birthtime },
+                        { key: 5, label: "updated time", children: fileState.mtime },
+                    ]}
+                />
+            </>),
         });
     }
 
     return (
         <>
             {contextHolder}
-            <Card title="Information" style={{ marginBottom: 16 }} extra={<a onClick={info}>Detail</a>}>
+            <Card title="Information" style={{ marginBottom: 16 }} extra={<a onClick={openModal}>Detail</a>}>
                 <Form
                     layout={"vertical"}
                     initialValues={{ layout: "vertical" }}
@@ -85,8 +81,8 @@ const FileContent: React.FC<FileContentProps> = ({ fileState, setFileState, setD
                             status={existsFileName ? "error" : undefined}
                             value={fileState.name}
                             prefix={existsFileName ? <><ExclamationCircleOutlined />File name is already exists</> : undefined}
-                            onBlur={() => checkExistsFileName()}
-                            onChange={(e) => setFileState({ ...fileState, name: e.target.value, isChanged: true })}
+                            onBlur={checkExistsFileName}
+                            onChange={onChangeFileName}
                             maxLength={100}
                         />
                     </Form.Item>
@@ -96,7 +92,7 @@ const FileContent: React.FC<FileContentProps> = ({ fileState, setFileState, setD
                             rows={30}
                             value={fileState.content}
                             placeholder="Sql"
-                            onChange={(e) => setFileState({ ...fileState, content: e.target.value, isChanged: true })}
+                            onChange={onChangeFileContent}
                         />
                     </Form.Item>
                 </Form>

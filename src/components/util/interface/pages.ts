@@ -91,7 +91,7 @@ export interface TemplateControlProps {
 }
 
 export interface PatchingTemplateModifyPageProps {
-    value: TemplateListType;
+    payload: TemplateListType;
     type: "modify" | "create";
 }
 
@@ -129,15 +129,24 @@ export interface interfaceUseServiceAccessHistoryProps {
 
 export interface TemplateModifyControlProps {
     onCreate: () => void;
-    onDelete: () => void;
     onUpdate: () => void;
-    type: "create" | "modify";
+    onDelete: () => void;
+    mode: "create" | "update";
     disabled: boolean;
 }
 
 export interface OutputFilesControlProps {
+    onUpdate: () => void,
     onDelete: () => void,
-    onEdit: () => void,
+    isChecked: boolean,
+    isValidated: boolean,
+    selectedFileLength: number
+}
+
+export interface SearchingSqlControlProps {
+    onCreate: () => void,
+    onUpdate: () => void,
+    onDelete: () => void,
     isChecked: boolean,
     isValidated: boolean,
     selectedFileLength: number
@@ -160,10 +169,8 @@ export interface FileInformationProps {
     fileState: FileStateType;
 }
 
-
 export interface FileEditControlProps {
     onUpdate: () => Promise<void>
-    onCancel: () => void
     disabled: boolean
 }
 
@@ -179,4 +186,19 @@ export interface SettingCardProps {
     children: React.ReactNode;
     tourOpen: boolean;
     setTourOpen: (open: boolean) => void;
+}
+
+export interface SearchingSqlModifyContentProps {
+    fileName: string
+    setFileName: React.Dispatch<React.SetStateAction<string>>
+    fileContent: string
+    setFileContent: React.Dispatch<React.SetStateAction<string>>
+    setDisabled: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export interface SearchingSqlModifyControlProps {
+    onCreate: ()=> void;
+    onUpdate: ()=> void;
+    mode: string;
+    disabled: boolean;
 }

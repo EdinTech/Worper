@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import useStore from "../../util/hooks/useStore";
-import SettingPatchingSql from "./patching-sql";
 import AppPageTitle from "../../ui/AppPageTitle";
 import AppAlert from "../../ui/AppAlert";
 import { NOT_FOUND_WORKSPACE_PATH_KEY_MESSAGE } from "../../util/const/message";
 import { PATCHING } from "../../util/const/setting";
-import SettingPatchingSqlDetail from "./patching-sql-detail";
+import SettingDetail from "./setting-detail";
+import SettingPath from "./setting-path";
 
 const SettingPage = () => {
 
@@ -27,16 +27,17 @@ const SettingPage = () => {
 
     return (
         <>
-            <AppPageTitle>Generate Setting</AppPageTitle>
+            <AppPageTitle>Setting</AppPageTitle>
             <AppAlert
                 messages={alertMessages}
                 type="warning"
                 closable={true}
                 showIcon={true}
             />
-            <SettingPatchingSql />
 
-            <SettingPatchingSqlDetail />
+            <SettingPath />
+
+            <SettingDetail />
         </>
     )
 }

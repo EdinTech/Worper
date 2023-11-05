@@ -1,22 +1,25 @@
-import AppPageTitle from '../../../../ui/AppPageTitle';
 import { useEffect, useState } from 'react';
 import { Table } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { path } from '../../../../util/const/path';
-import type { ColumnsType } from 'antd/es/table';
 import useValidateSetting from '../../../../util/hooks/useValidateSetting';
 import useFileSystem from '../../../../util/hooks/useFileSystem';
 import useMessage from '../../../../util/hooks/useMessage';
-import OutputFileControl from './OutputFileControl';
+import OutputFileControl from './SearchingSqlControl';
 import useSetting from '../../../../util/hooks/useSetting';
-import OutputFileSearchInput from './OutputFileSearchInput';
+import OutputFileSearchInput from './SearchingSqlSearchInput';
+import AppPageTitle from '../../../../ui/AppPageTitle';
+import type { ColumnsType } from 'antd/es/table';
+import SearchingSqlDrawer from './SearchingSqlDrawer';
 
-const PatchingOutputFilePage = () => {
+const SearchingSqlPage: React.FC = () => {
 
     const navigate = useNavigate();
     const [files, setFiles] = useState<ColumnsType>();
     const [filteredFiles, setFilteredFiles] = useState<ColumnsType>();
     const [selectedFilePaths, setSelectedFilePaths] = useState<string[]>();
+    const [currentRecord, setCurrentRecord] = useState<{ key: string, file: string }>();
+    const [open, setOpen] = useState(false);
     const { isValidated, appAlert } = useValidateSetting();
     const { setting } = useSetting();
     const { message, contextHolder } = useMessage();
@@ -24,7 +27,7 @@ const PatchingOutputFilePage = () => {
 
     useEffect(() => {
         (async () => {
-            const path = await setting.getCurrentOutputDirectoryPath();
+            const path = await setting.getSqlDirectoryPath();
             if (!path) {
                 return;
             }
@@ -35,10 +38,11 @@ const PatchingOutputFilePage = () => {
         })();
     }, []);
 
-    const onUpdate = () => {
-        navigate(path.patchingOutputFileEdit, {
+    const onCreate = () => {
+        navigate(path.searchingSqlModify, {
             state: {
-                filePath: selectedFilePaths[0]
+                payload: null,
+                mode: 'create'
             }
         });
     }
@@ -52,6 +56,15 @@ const PatchingOutputFilePage = () => {
         message.success("deleted!");
     }
 
+    const onUpdate = () => {
+        navigate(path.searchingSqlModify, {
+            state: {
+                payload: selectedFilePaths[0],
+                mode: 'update'
+            }
+        });
+    }
+
     const onChange = (selectedRowKeys: string[]) => {
         setSelectedFilePaths(selectedRowKeys)
     }
@@ -59,6 +72,11 @@ const PatchingOutputFilePage = () => {
     const onSearch = (value: React.ChangeEvent<HTMLInputElement>) => {
         const keyword = value.target.value;
         searchByKeyword(keyword, files, setFilteredFiles);
+    }
+
+    const onHandleDrawer = (record: { key: string, file: string }) => {
+        setCurrentRecord(record);
+        setOpen(true)
     }
     return (
         <>
@@ -69,6 +87,7 @@ const PatchingOutputFilePage = () => {
                 isChecked={selectedFilePaths && selectedFilePaths.length > 0}
                 isValidated={isValidated}
                 selectedFileLength={selectedFilePaths?.length}
+                onCreate={onCreate}
                 onDelete={onDelete}
                 onUpdate={onUpdate}
             />
@@ -78,21 +97,29 @@ const PatchingOutputFilePage = () => {
                     type: 'checkbox',
                     onChange: onChange,
                 }}
-                columns={columns}
+                columns={getColumn(onHandleDrawer)}
                 dataSource={filteredFiles}
+            />
+            <SearchingSqlDrawer
+                record={currentRecord}
+                open={open}
+                onClose={() => setOpen(false)}
             />
         </>
     );
 }
 
-export default PatchingOutputFilePage;
+export default SearchingSqlPage;
 
-const columns: ColumnsType = [
-    {
-        title: 'File',
-        dataIndex: 'file',
-    }
-];
+const getColumn = (onHandleDrawer: (record: unknown) => void) => {
+    return [
+        {
+            title: 'File',
+            dataIndex: 'file',
+            render: (text, record) => <a onClick={() => onHandleDrawer(record)}>{text}</a>,
+        }
+    ] as ColumnsType
+}
 
 let timeout: ReturnType<typeof setTimeout> | null;
 
@@ -108,7 +135,7 @@ const searchByKeyword = (keyword: string, list: ColumnsType, callback: React.Dis
     }
 
     timeout = setTimeout(() => {
-        const newList = list.filter((v: { key: string, file:string }) => v.file.includes(keyword))
+        const newList = list.filter((v: { key: string, file: string }) => v.file.includes(keyword))
         callback(newList);
     }, 300);
 }

@@ -16,12 +16,12 @@ const PatchingSqlOutputPathControl: React.FC = () => {
     const { fs, isLoading } = useFileSystem();
     const { message, contextHolder } = useMessage();
 
-    const { patchingSetting } = useSetting();
+    const { setting } = useSetting();
 
     useEffect(() => {
 
         (async () => {
-            const value = await patchingSetting.getOutputDirectoryPath();
+            const value = await setting.getOutputDirectoryPath();
             if (value) {
                 setOutputPath(value);
                 setDisable(true);
@@ -42,7 +42,7 @@ const PatchingSqlOutputPathControl: React.FC = () => {
         }
 
         if (outputPath.trim().length === 0) {
-            patchingSetting.removeOutputDirectoryPath()
+            setting.removeOutputDirectoryPath()
             message.success("Directory deleted.");
             return;
         }
@@ -53,7 +53,7 @@ const PatchingSqlOutputPathControl: React.FC = () => {
             message.error("No find Directory.")
             return;
         }
-        patchingSetting.setOutputDirectoryPath(outputPath)
+        setting.setOutputDirectoryPath(outputPath)
 
         setDisable(true);
         message.success("Directory saved.");

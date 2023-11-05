@@ -11,18 +11,18 @@ export const serviceInformations: ServiceInformation[] = [
     },
     {
         id: 2,
-        title: 'Templates List',
+        title: 'Templates',
         description: 'A Template list to Generate SQL files',
         path: path.patchingTemplate,
         parentCategory: 'Sql'
     },
-    {
-        id: 3,
-        title: 'Template Editor',
-        description: 'Editor to Register and edit a Template for Generating SQL files',
-        path: path.patchingTemplateModify,
-        parentCategory: 'Sql'
-    },
+    // {
+    //     id: 3,
+    //     title: 'Template Editor',
+    //     description: 'Editor to Register and edit a Template for Generating SQL files',
+    //     path: path.patchingTemplateModify,
+    //     parentCategory: 'Sql'
+    // },
     {
         id: 4,
         title: 'Output Files',

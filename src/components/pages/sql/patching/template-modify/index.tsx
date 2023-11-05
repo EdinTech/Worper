@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { NavigateFunction, useLocation, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import TemplateModifyBasicInformation from './TemplateModifyBasicInformation';
 import TemplateModifyDescription from './TemplateModifyDescription';
@@ -17,7 +17,7 @@ const PatchingTemplateModifyPage: React.FC = () => {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const { value: locationValue, type } = location.state ? location.state : templateListLocationState as PatchingTemplateModifyPageProps;
+    const { payload, mode } = location.state ? location.state : templateListLocationState as PatchingTemplateModifyPageProps;
 
     const [disabled, setDisabled] = useState(true);
     const [template, setTemplate] = useState<TemplateType>(patchingFileInitialState);
@@ -27,13 +27,13 @@ const PatchingTemplateModifyPage: React.FC = () => {
 
     useEffect(() => {
 
-        if (type !== 'modify') {
+        if (mode === 'create') {
             return;
         }
 
-        setTemplateListItem(locationValue);
+        setTemplateListItem(payload);
         templateManager
-            .get(locationValue.key)
+            .get(payload.key)
             .then(setTemplate);
     }, []);
 
@@ -58,9 +58,7 @@ const PatchingTemplateModifyPage: React.FC = () => {
         await templateIndexManager.add({ [newTemplateListItem.templateTitle]: newTemplateListItem.key });
         await templateListManager.add(key, newTemplateListItem);
         message.success("Template is created", "onCreate");
-        setTimeout(() => {
-            navigate(path.patchingTemplate);
-        }, 500)
+        redirect(navigate);
     }
 
     const onUpdate = async () => {
@@ -76,15 +74,13 @@ const PatchingTemplateModifyPage: React.FC = () => {
             message.error("Template title is required");
             return;
         }
-        await templateIndexManager.remove(locationValue.templateTitle, "title_index");
+        await templateIndexManager.remove(payload.templateTitle, "title_index");
         await templateIndexManager.add({ [newTemplateListItem.templateTitle]: newTemplateListItem.key });
         await templateListManager.update(newTemplateListItem.key, newTemplateListItem);
         await templateManager.update(newTemplateListItem.key, template);
 
         message.success("Template is updated", "onUpdate");
-        setTimeout(() => {
-            navigate(path.patchingTemplate);
-        }, 500)
+        redirect(navigate);
     }
 
     const onDelete = async () => {
@@ -93,13 +89,11 @@ const PatchingTemplateModifyPage: React.FC = () => {
             message.error("Deleting is failed", "onDelete")
             return;
         }
-        await templateIndexManager.remove(locationValue.templateTitle, "title_index");
+        await templateIndexManager.remove(payload.templateTitle, "title_index");
         await templateListManager.remove(templateListItem.key);
         await templateManager.remove(templateListItem.key);
         message.success("Template is deleted", "onDelete");
-        setTimeout(() => {
-            navigate(path.patchingTemplate);
-        }, 500)
+        redirect(navigate);
     }
 
 
@@ -107,7 +101,7 @@ const PatchingTemplateModifyPage: React.FC = () => {
         <>
             {contextHolder}
             <AppPageTitle previousPage='Sql Templates' previousPath={path.patchingTemplate}>
-                {type === 'modify' ? 'Modify Template' : 'Create Template'}
+                {mode === 'modify' ? 'Modify Template' : 'Create Template'}
             </AppPageTitle>
 
             {/* file Information component */}
@@ -123,7 +117,7 @@ const PatchingTemplateModifyPage: React.FC = () => {
             <TemplateModifySql template={template} setTemplate={setTemplate} />
 
             {/* button component */}
-            <TemplateModifyControl onCreate={onCreate} onUpdate={onUpdate} onDelete={onDelete} type={type} disabled={disabled} />
+            <TemplateModifyControl onCreate={onCreate} onUpdate={onUpdate} onDelete={onDelete} mode={mode} disabled={disabled} />
         </>
     )
 }
@@ -151,6 +145,12 @@ const templateListInitialState: TemplateListType = {
 }
 
 const templateListLocationState: PatchingTemplateModifyPageProps = {
-    value: templateListInitialState,
+    payload: templateListInitialState,
     type: "create"
+}
+
+const redirect = (navigate: NavigateFunction) => {
+    setTimeout(() => {
+        navigate(path.patchingTemplate);
+    }, 500)
 }

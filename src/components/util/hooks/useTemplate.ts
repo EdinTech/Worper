@@ -11,12 +11,12 @@ export type TemplateIndexType = {
 
 const useTemplate = () => {
     const { fs } = useFileSystem();
-    const { patchingSetting } = useSetting();
+    const { setting } = useSetting();
 
     const createTemplateListManager = () => {
 
         const get = async () => {
-            const path = await patchingSetting.getTemplateListFilePath();
+            const path = await setting.getTemplateListFilePath();
             if (!path) {
                 return;
             }
@@ -25,7 +25,7 @@ const useTemplate = () => {
         }
 
         const getByKey =async (key: string) => {
-            const path = await patchingSetting.getTemplateListFilePath();
+            const path = await setting.getTemplateListFilePath();
             if (!path) {
                 return;
             }
@@ -35,7 +35,7 @@ const useTemplate = () => {
         }
 
         const add = async (key: string, listObj: TemplateListType) => {
-            const path = await patchingSetting.getTemplateListFilePath();
+            const path = await setting.getTemplateListFilePath();
             if (!path) {
                 return;
             }
@@ -46,7 +46,7 @@ const useTemplate = () => {
         }
 
         const update = async (key: string, listObj: TemplateListType) => {
-            const path = await patchingSetting.getTemplateListFilePath();
+            const path = await setting.getTemplateListFilePath();
             if (!path) {
                 return;
             }
@@ -56,7 +56,7 @@ const useTemplate = () => {
         }
 
         const remove = async (key: string) => {
-            const path = await patchingSetting.getTemplateListFilePath();
+            const path = await setting.getTemplateListFilePath();
             if (!path) {
                 return;
             }
@@ -70,7 +70,7 @@ const useTemplate = () => {
 
     const createTemplateIndexManager = () => {
         const get = async () => {
-            const path = await patchingSetting.getTemplateIndexFilePath();
+            const path = await setting.getTemplateIndexFilePath();
             if (!path) {
                 return;
             }
@@ -79,7 +79,7 @@ const useTemplate = () => {
         }
 
         const add = async (indexObj: { [fileName: string]: string }) => {
-            const path = await patchingSetting.getTemplateIndexFilePath();
+            const path = await setting.getTemplateIndexFilePath();
             if (!path) {
                 return;
             }
@@ -92,7 +92,7 @@ const useTemplate = () => {
         }
 
         const remove = async (title: string, type: "title_index") => {
-            const path = await patchingSetting.getTemplateIndexFilePath();
+            const path = await setting.getTemplateIndexFilePath();
             if (!path) {
                 return;
             }
@@ -107,7 +107,7 @@ const useTemplate = () => {
     const createTemplateManager = () => {
 
         const get = async (key: string) => {
-            const path = await patchingSetting.getTemplateDirectoryPath();
+            const path = await setting.getTemplateDirectoryPath();
             if (!path) {
                 return;
             }
@@ -122,7 +122,7 @@ const useTemplate = () => {
         }
 
         const create = async (templateObj: TemplateType) => {
-            const path = await patchingSetting.getTemplateDirectoryPath();
+            const path = await setting.getTemplateDirectoryPath();
             if (!path) {
                 return;
             }
@@ -135,7 +135,7 @@ const useTemplate = () => {
         }
 
         const update = async (key: string, templateObj: TemplateType) => {
-            const path = await patchingSetting.getTemplateDirectoryPath();
+            const path = await setting.getTemplateDirectoryPath();
             if (!path) {
                 return;
             }
@@ -145,7 +145,7 @@ const useTemplate = () => {
         }
 
         const remove = async (key: string) => {
-            const path = await patchingSetting.getTemplateDirectoryPath();
+            const path = await setting.getTemplateDirectoryPath();
             if (!path) {
                 return;
             }
@@ -169,7 +169,7 @@ const useTemplate = () => {
                 return RETURN.FAILURE(output, "Not Found Template(No Index)")
             }
 
-            const path = await patchingSetting.getTemplateDirectoryPath();
+            const path = await setting.getTemplateDirectoryPath();
             if (!path) {
                 return RETURN.FAILURE(output, "Not Found Template(No Path)")
             }

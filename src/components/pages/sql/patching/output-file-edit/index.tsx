@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import dayjs from 'dayjs';
 import AppPageTitle from '../../../../ui/AppPageTitle';
 import FileContent from './FileContent';
@@ -9,38 +9,9 @@ import useFileSystem from '../../../../util/hooks/useFileSystem';
 import { path } from '../../../../util/const/path';
 import type { FileStateType } from "../../../../util/interface/pages";
 
-const fileInitialState: FileStateType = {
-    atime: '',
-    mtime: '',
-    ctime: '',
-    birthtime: '',
-    size: '',
-    path: '',
-    name: '',
-    content: '',
-    originName: '',
-    isChanged: false,
-}
-
-const splitFilePath = (filePath: string) => {
-    const lastIndex = filePath.lastIndexOf('/');
-    if (lastIndex === -1) {
-        return {
-            path: '',
-            fileName: filePath,
-        };
-    }
-
-    return {
-        path: filePath.substring(0, lastIndex + 1),
-        fileName: filePath.substring(lastIndex + 1),
-    };
-}
-
 const OutputFileEditPage: React.FC = () => {
 
     const location = useLocation();
-    const navigate = useNavigate();
     const [fileState, setFileState] = useState(fileInitialState);
     const [disabled, setDisabled] = useState(true);
     const { message, contextHolder } = useMessage();
@@ -51,8 +22,9 @@ const OutputFileEditPage: React.FC = () => {
     useEffect(() => {
         (async () => {
             const stat = await fs.stat(filePath);
-            const {path, fileName} = splitFilePath(filePath);
             const content = await fs.readFile(filePath);
+            const fileName = filePath.split('/').pop();
+            const path = filePath.replace(fileName, '');
             setFileState({
                 atime: dayjs(stat.atime).format('YYYY-MM-DD HH:mm:ss'),
                 mtime: dayjs(stat.mtime).format('YYYY-MM-DD HH:mm:ss'),
@@ -70,19 +42,15 @@ const OutputFileEditPage: React.FC = () => {
 
     const onUpdate = async () => {
         message.loading("loading...", "onUpdate");
-        try {
-            await fs.writeFile(filePath, fileState.content);
-            if(fileState.originName !== fileState.name) {
-                await fs.rename(filePath, fileState.path + fileState.name);
-            }
-            message.success("File is updated", "onUpdate");
-        } catch (e) {
+        const result = fs.writeFile(filePath, fileState.content);
+        if (!result) {
             message.error("File is not updated", "onUpdate");
+            return;
         }
-    }
-
-    const onCancel = () => {
-        navigate(path.patchingOutputFile);
+        if(fileState.originName !== fileState.name) {
+            await fs.rename(filePath, fileState.path + fileState.name);
+        }
+        message.success("File is updated", "onUpdate");
     }
 
     return (
@@ -90,11 +58,31 @@ const OutputFileEditPage: React.FC = () => {
             {contextHolder}
             <AppPageTitle previousPage='Sql Files' previousPath={path.patchingOutputFile}>File Edit</AppPageTitle>
 
-            <FileContent fileState={fileState} setFileState={setFileState} setDisabled={setDisabled} />
+            <FileContent
+                fileState={fileState}
+                setFileState={setFileState}
+                setDisabled={setDisabled}
+            />
 
-            <FileEditControl onUpdate={onUpdate} onCancel={onCancel} disabled={disabled || !fileState.isChanged}/>
+            <FileEditControl
+                disabled={disabled || !fileState.isChanged}
+                onUpdate={onUpdate}
+            />
         </>
     );
 }
 
 export default OutputFileEditPage;
+
+const fileInitialState: FileStateType = {
+    atime: '',
+    mtime: '',
+    ctime: '',
+    birthtime: '',
+    size: '',
+    path: '',
+    name: '',
+    content: '',
+    originName: '',
+    isChanged: false,
+}

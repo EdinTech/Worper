@@ -71,4 +71,8 @@ export const PATCHING = {
         "description": "This is a sample sql.",
         "extension": "sql"
     },
+    // sql directory path key
+    SQL_DIRECTORY_PATH_KEY: 'setting.patching.sqlPath',
+    // sql directory name
+    SQL_DIRECTORY_NAME: 'sql',
 }

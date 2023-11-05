@@ -9,12 +9,12 @@ const usePatchingSetting = () => {
     const [setting, setSetting] = useState<PatchingSetting>();
     const [settingPath, setSettingPath] = useState<string>();
 
-    const { patchingSetting } = useSetting();
+    const { setting: settingHelper } = useSetting();
 
     useEffect(() => {
 
         (async () => {
-            const path = await patchingSetting.getSettingFilePath();
+            const path = await settingHelper.getSettingFilePath();
             if (!path) {
                 return;
             }
@@ -26,7 +26,7 @@ const usePatchingSetting = () => {
     }, []);
 
     const getSetting = async () => {
-        const path = await patchingSetting.getSettingFilePath();
+        const path = await settingHelper.getSettingFilePath();
         if (!path) {
             return;
         }
@@ -37,7 +37,7 @@ const usePatchingSetting = () => {
     const getSettingPath = async () => {
         let path = settingPath;
         if (!path) {
-            path = await patchingSetting.getSettingFilePath();
+            path = await settingHelper.getSettingFilePath();
         }
         if (!path) {
             return;

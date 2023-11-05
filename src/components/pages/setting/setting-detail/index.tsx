@@ -8,7 +8,7 @@ import { PatchingSetting } from "../../../util/interface/common";
 import usePatchingSetting from "../../../util/hooks/usePatchingSetting";
 import useMessage from "../../../util/hooks/useMessage";
 
-const SettingPatchingSqlDetail: React.FC = () => {
+const SettingDetail: React.FC = () => {
 
     const [tourOpen, setTourOpen] = useState<boolean>(false);
     const [setting, setSetting] = useState<string>();
@@ -51,7 +51,7 @@ const SettingPatchingSqlDetail: React.FC = () => {
     return (
         <>
             {contextHolder}
-            <SettingCard title="Sql Generator detail" steps={steps} tourOpen={tourOpen} setTourOpen={setTourOpen} >
+            <SettingCard title="Detail" steps={steps} tourOpen={tourOpen} setTourOpen={setTourOpen} >
                 <Space direction="vertical" style={{ width: "100%" }}>
                     <Form
                         layout={"vertical"}
@@ -85,7 +85,7 @@ const SettingPatchingSqlDetail: React.FC = () => {
     );
 }
 
-export default SettingPatchingSqlDetail;
+export default SettingDetail;
 
 const steps: TourProps['steps'] = [
     {

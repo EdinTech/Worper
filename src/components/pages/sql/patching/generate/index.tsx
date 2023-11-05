@@ -14,35 +14,22 @@ import useSetting from '../../../../util/hooks/useSetting';
 import { path } from '../../../../util/const/path';
 import { PatchingFile, } from '../../../../util/interface/pages';
 
-const patchingFileInitialState: PatchingFile = {
-    id: 0,
-    applyingDate: dayjs().format('YYYYMMDD'),
-    applier: '',
-    checkingDate: dayjs().format('YYYYMMDD'),
-    checker: '',
-    tableName: '',
-    action: '',
-    sql: '',
-    description: '',
-    extension: 'sql',
-};
-
 const PatchingGeneratePage: React.FC = () => {
 
-    const [state, setState] = useState<PatchingFile>(patchingFileInitialState);
-    const [outputPath, setOutputPath] = useState(null);
     const navigate = useNavigate();
-
-    const { patchingSetting } = useSetting();
-    const { fs, isLoading, error } = useFileSystem();
+    const [outputPath, setOutputPath] = useState(null);
+    const [state, setState] = useState<PatchingFile>(patchingFileInitialState);
+    const { setting } = useSetting();
     const { appAlert } = useValidateSetting();
+    const { fs, isLoading, error } = useFileSystem();
+
 
     useEffect(() => {
-        patchingSetting.getCurrentOutputDirectoryPath()
+        setting.getCurrentOutputDirectoryPath()
             .then(path => path && setOutputPath(path));
     }, []);
 
-    const onGenerateHandler = async () => {
+    const onGenerate = async () => {
         const { fullFileName, fullFilePath } = await getFullPath();
 
         // description
@@ -134,9 +121,22 @@ const PatchingGeneratePage: React.FC = () => {
             <PatchingFileInfo outputPath={outputPath} state={state} />
 
             {/* control component */}
-            <PatchingControl onGenerate={onGenerateHandler} isLoading={isLoading} disabled={!outputPath} />
+            <PatchingControl isLoading={isLoading} disabled={!outputPath} onGenerate={onGenerate} />
         </>
     );
 }
 
 export default PatchingGeneratePage;
+
+const patchingFileInitialState: PatchingFile = {
+    id: 0,
+    applyingDate: dayjs().format('YYYYMMDD'),
+    applier: '',
+    checkingDate: dayjs().format('YYYYMMDD'),
+    checker: '',
+    tableName: '',
+    action: '',
+    sql: '',
+    description: '',
+    extension: 'sql',
+};

@@ -11,17 +11,17 @@ const layout = {
     wrapperCol: { span: 16 },
 };
 
-const PatchingSqlDefaultPathControl: React.FC = () => {
+const SettingPathWorkspaceControl: React.FC = () => {
 
     const [disable, setDisable] = useState(false);
     const [workspacePath, setWorkspacePath] = useState('');
     const { fs, isLoading } = useFileSystem();
     const { message, contextHolder } = useMessage();
-    const { patchingSetting } = useSetting();
+    const { setting } = useSetting();
 
     useEffect(() => {
         (async () => {
-            const value = await patchingSetting.getWorkspacePath();
+            const value = await setting.getWorkspacePath();
             if (!value) {
                 return;
             }
@@ -50,28 +50,28 @@ const PatchingSqlDefaultPathControl: React.FC = () => {
             message.error("No find Directory.")
             return;
         }
-        patchingSetting.setWorkspacePath(workspacePath);
+        setting.setWorkspacePath(workspacePath);
 
         // set default output directory path
         const outputDirectoryPath = workspacePath + '/' + PATCHING.OUTPUT_DIRECTORY_NAME;
         await fs.createDirectoryIfNotExists(outputDirectoryPath);
-        patchingSetting.setDefaultOutputDirectoryPath(outputDirectoryPath);
+        setting.setDefaultOutputDirectoryPath(outputDirectoryPath);
 
         // set setting directory path
         const settingDirectoryPath = workspacePath + '/' + PATCHING.SETTING_DIRECTORY_NAME;
         await fs.createDirectoryIfNotExists(settingDirectoryPath);
-        patchingSetting.setSettingDirectoryPath(settingDirectoryPath);
+        setting.setSettingDirectoryPath(settingDirectoryPath);
 
         // set setting file
         // directory_path/setting/setting.json
         const settingFilePath = settingDirectoryPath + '/' + PATCHING.SETTING_FILE_NAME;
         await fs.createFileIfNotExists(settingFilePath, PATCHING.INITIAL_SETTING_FILE_CONTENT);
-        patchingSetting.setSettingFilePath(settingFilePath);
+        setting.setSettingFilePath(settingFilePath);
 
         // set template directory path
         const templatesDirectoryPath = workspacePath + '/' + PATCHING.TEMPLATE_DIRECTORY_NAME;
         await fs.createDirectoryIfNotExists(templatesDirectoryPath);
-        patchingSetting.setTemplateDirectoryPath(templatesDirectoryPath);
+        setting.setTemplateDirectoryPath(templatesDirectoryPath);
 
         // set example template file
         // directory_path/templates/ex1.json
@@ -82,13 +82,18 @@ const PatchingSqlDefaultPathControl: React.FC = () => {
         // directory_path/templates/template_index.json
         const templateIndexFilePath = templatesDirectoryPath + '/' + PATCHING.TEMPLATE_INDEX_FILE_NAME;
         await fs.createFileIfNotExists(templateIndexFilePath, PATCHING.INITIAL_TEMPLATE_INDEX_FILE_CONTENT);
-        patchingSetting.setTemplateIndexFilePath(templateIndexFilePath);
+        setting.setTemplateIndexFilePath(templateIndexFilePath);
 
         // set template list file
         // directory_path/templates/template_list.json
         const templateListFilePath = templatesDirectoryPath + '/' + PATCHING.TEMPLATE_LIST_FILE_NAME;
         await fs.createFileIfNotExists(templateListFilePath, PATCHING.INITIAL_TEMPLATE_LIST_FILE_CONTENT);
-        patchingSetting.setTemplateListFilePath(templateListFilePath);
+        setting.setTemplateListFilePath(templateListFilePath);
+
+        // set sql file directory path
+        const sqlDirectoryPath = workspacePath + '/' + PATCHING.SQL_DIRECTORY_NAME;
+        await fs.createDirectoryIfNotExists(sqlDirectoryPath);
+        setting.setSqlDirectoryPath(sqlDirectoryPath);
 
         message.success("Directory saved.");
         setDisable(true);
@@ -119,7 +124,7 @@ const PatchingSqlDefaultPathControl: React.FC = () => {
     )
 }
 
-export default PatchingSqlDefaultPathControl;
+export default SettingPathWorkspaceControl;
 
 const styles = {
     form: {
