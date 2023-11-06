@@ -2,6 +2,7 @@ import { IpcMainInvokeEvent } from 'electron';
 import Store from 'electron-store';
 import * as fs from 'fs/promises';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type IpcHandler = (event: IpcMainInvokeEvent, ...args: any[]) => Promise<any>;
 
 const handleCreateFile: IpcHandler = async (event, filePath: string) => {
@@ -95,7 +96,7 @@ const handleRenameFile: IpcHandler = async (event, filePath: string, newFilePath
 }
 
 const store = new Store();
-const handleSetStore: IpcHandler = async (event, key: string, value: any) => {
+const handleSetStore: IpcHandler = async (event, key: string, value: unknown) => {
     store.set(key, value);
     return true;
 }
@@ -104,6 +105,7 @@ const handleGetStore: IpcHandler = async (event, key: string) => {
     return store.get(key);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const handleClearStore: IpcHandler = async (event) => {
     store.clear();
     return true;

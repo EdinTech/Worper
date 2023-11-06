@@ -44,7 +44,7 @@ const PBInputActionControl: React.FC<PBControl> = ({ state, onChangeState }) => 
         return () => {
             clearTimeout(timer);
         }
-    }, [value]);
+    }, [keyword]);
 
     const handleChange = (value: string) => {
         setValue(value);

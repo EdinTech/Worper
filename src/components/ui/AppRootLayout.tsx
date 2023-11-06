@@ -8,6 +8,7 @@ const requiredPathsForLogs = [
     path.patchingGenerate,
     path.patchingTemplate,
     path.patchingOutputFile,
+    path.searchingSql,
 ]
 
 const AppRootLayout: React.FC = () => {

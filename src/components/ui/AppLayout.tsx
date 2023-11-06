@@ -5,7 +5,7 @@ import AppLayoutContent from './AppLayoutContent';
 
 
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [collapsed, setCollapsed] = useState(true);
+    const [collapsed, setCollapsed] = useState(false);
     const onClickSider = (value: boolean) => {
         setCollapsed(value);
     }

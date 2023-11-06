@@ -15,7 +15,7 @@ import SearchingSqlPage from './components/pages/sql/searching/sql';
 import SearchingSqlModifyPage from './components/pages/sql/searching/sql-modify';
 
 const routes = [
-    { path: path.main, element: <PatchingTemplatePage /> },
+    { path: path.main, element: <MainPage /> },
     // sql > patching
     { path: path.patchingGenerate, element: <PatchingGeneratePage /> },
     { path: path.patchingGenerateResult, element: <PatchingGenerateResultPage /> },

@@ -28,6 +28,9 @@ const PatchingTemplatePage: React.FC = () => {
     useEffect(() => {
         (async () => {
             const list = await templateListManager.get();
+            if (!list) {
+                return;
+            }
             const lists = Object.values(list);
             setTemplateItems(lists);
             setFilteredTemplate(lists);
