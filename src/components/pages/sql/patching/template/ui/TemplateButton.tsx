@@ -1,15 +1,13 @@
-import { CopyOutlined } from '@ant-design/icons';
-
 const SearchingSqlButton: React.FC<{ onCopy: () => void }> = ({ onCopy }) => {
     return (
         <>
             <div style={{
                 position: 'absolute',
                 right: 32,
-                transform: 'translateY(15px)',
+                transform: 'translateY(-10px)',
                 opacity: 0.5,
             }}>
-                <CopyOutlined onClick={onCopy} />
+                <a onClick={onCopy}>copy</a>
             </div>
         </>
     )

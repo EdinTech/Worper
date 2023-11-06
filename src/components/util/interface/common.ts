@@ -35,3 +35,9 @@ export type PatchingSetting = {
         [value: string]: string
     },
 }
+
+export interface TemplateDrawerProps {
+    open: boolean;
+    onClose: () => void;
+    payload: TemplateListType
+}

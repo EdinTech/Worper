@@ -5,7 +5,7 @@ const SearchingSqlButton: React.FC<{ onCopy: () => void }> = ({ onCopy }) => {
         <>
             <div style={{
                 position: 'absolute',
-                right: 32,
+                right: 16,
                 transform: 'translateY(15px)',
                 opacity: 0.5,
             }}>

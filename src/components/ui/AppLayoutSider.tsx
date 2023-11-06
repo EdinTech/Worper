@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Layout, Menu } from 'antd';
 import { HomeOutlined, CodeSandboxOutlined, SettingOutlined } from '@ant-design/icons';
 import { path } from '../util/const/path';
@@ -33,6 +33,7 @@ const bottomItems: MenuItem[] = [
 const AppLayoutSider: React.FC<{ onClick: (value: boolean) => void, collapsed: boolean}> = ({ onClick, collapsed }) => {
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onClickMenu = (e: any) => {
@@ -47,8 +48,8 @@ const AppLayoutSider: React.FC<{ onClick: (value: boolean) => void, collapsed: b
             style={{ position: "fixed", overflow: "auto", top: 0, bottom: 0, left: 0, zIndex: 1 }}
         >
             <div className="demo-logo-vertical" />
-            <Menu theme="dark" defaultSelectedKeys={['/main_window']} mode="inline" items={items} onClick={onClickMenu} />
-            <Menu selectedKeys={[]} theme="dark" mode="inline" items={bottomItems} style={{ position: "absolute", bottom: 50 }} onClick={onClickMenu}/>
+            <Menu theme="dark" selectedKeys={[location.pathname]} mode="inline" items={items} onClick={onClickMenu} />
+            <Menu selectedKeys={[location.pathname]} theme="dark" mode="inline" items={bottomItems} style={{ position: "absolute", bottom: 50 }} onClick={onClickMenu}/>
         </Sider>
     );
 }

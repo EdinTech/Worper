@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import PatchingTemplate from './PatchingTemplate';
 import PatchingBasicInformation from './PatchingBasicInformation';
@@ -11,22 +11,40 @@ import AppPageTitle from '../../../../ui/AppPageTitle';
 import useFileSystem from '../../../../util/hooks/useFileSystem';
 import useValidateSetting from '../../../../util/hooks/useValidateSetting';
 import useSetting from '../../../../util/hooks/useSetting';
+import useTemplate from '../../../../util/hooks/useTemplate';
 import { path } from '../../../../util/const/path';
 import { PatchingFile, } from '../../../../util/interface/pages';
 
 const PatchingGeneratePage: React.FC = () => {
 
     const navigate = useNavigate();
+    const location = useLocation();
     const [outputPath, setOutputPath] = useState(null);
     const [state, setState] = useState<PatchingFile>(patchingFileInitialState);
     const { setting } = useSetting();
     const { appAlert } = useValidateSetting();
     const { fs, isLoading, error } = useFileSystem();
+    const { templateManager } = useTemplate();
 
 
     useEffect(() => {
         setting.getCurrentOutputDirectoryPath()
             .then(path => path && setOutputPath(path));
+
+        if (!location.state) {
+            return;
+        }
+
+        (async () => {
+            const template = await templateManager.get(location.state.templateKey);
+            template && setState(prevState => {
+                return {
+                    ...prevState,
+                    ...template,
+                } as PatchingFile;
+            });
+        })();
+
     }, []);
 
     const onGenerate = async () => {

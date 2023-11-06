@@ -189,11 +189,12 @@ export interface SettingCardProps {
 }
 
 export interface SearchingSqlModifyContentProps {
-    fileName: string
-    setFileName: React.Dispatch<React.SetStateAction<string>>
-    fileContent: string
-    setFileContent: React.Dispatch<React.SetStateAction<string>>
-    setDisabled: React.Dispatch<React.SetStateAction<boolean>>
+    originFileName: string;
+    fileName: string;
+    setFileName: React.Dispatch<React.SetStateAction<string>>;
+    fileContent: string;
+    setFileContent: React.Dispatch<React.SetStateAction<string>>;
+    setDisabled: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export interface SearchingSqlModifyControlProps {

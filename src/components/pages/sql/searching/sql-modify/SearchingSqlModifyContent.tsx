@@ -2,20 +2,15 @@ import { Card, Form, Input } from "antd";
 import { SearchingSqlModifyContentProps } from "../../../../util/interface/pages";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
 import TextArea from "antd/es/input/TextArea";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import useFileSystem from "../../../../util/hooks/useFileSystem";
 import useSetting from "../../../../util/hooks/useSetting";
 
-const SearchingSqlModifyContent: React.FC<SearchingSqlModifyContentProps> = ({ fileName, setFileName, fileContent, setFileContent, setDisabled }) => {
+const SearchingSqlModifyContent: React.FC<SearchingSqlModifyContentProps> = ({ originFileName, fileName, setFileName, fileContent, setFileContent, setDisabled }) => {
 
-    const [originFileName, setOriginFileName] = useState<string>();
     const [existsFileName, setExistsFileName] = useState(false);
     const { fs } = useFileSystem();
     const { setting } = useSetting();
-
-    useEffect(() => {
-        setOriginFileName(fileName);
-    })
 
     const checkExistsFileName = async () => {
         if (!fileName) {

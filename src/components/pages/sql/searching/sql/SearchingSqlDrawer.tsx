@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Drawer, Typography } from 'antd';
+import { Button, Drawer, Typography } from 'antd';
 import useFileSystem from '../../../../util/hooks/useFileSystem';
 import useMessage from '../../../../util/hooks/useMessage';
 import dayjs from "dayjs";
@@ -54,11 +54,7 @@ const SearchingSqlDrawer: React.FC<SearchingSqlDrawerProps> = ({ open, onClose, 
                 onClose={onClose}
                 open={open}
             >
-                <Text type='secondary' style={{ fontSize: 12 }}>
-                    updated at: {dayjs(stat?.mtime).format('YYYY-MM-DD HH:mm:ss')}
-                </Text>
-                <SearchingSqlButton onCopy={onCopy} />
-                <pre>
+                <pre onClick={onCopy} style={{ cursor: "pointer" }}>
                     <code className="language-sql">{sqlCode}</code>
                 </pre>
             </Drawer>

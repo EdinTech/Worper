@@ -1,25 +1,19 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button, Descriptions, Drawer, Typography } from 'antd';
-import useMessage from '../../../../util/hooks/useMessage';
-import dayjs from "dayjs";
 import Prism from "prismjs";
+import { path } from '../../../../util/const/path';
+import useMessage from '../../../../util/hooks/useMessage';
+import useTemplate from '../../../../util/hooks/useTemplate';
+import { TemplateType, TemplateDrawerProps } from '../../../../util/interface/common';
 import "prismjs/components/prism-sql";
 import "prismjs/themes/prism.css";
-import SearchingSqlButton from './ui/TemplateButton';
-import useTemplate from '../../../../util/hooks/useTemplate';
-import { TemplateListType, TemplateType } from '../../../../util/interface/common';
-
-
-export interface TemplateDrawerProps {
-    open: boolean;
-    onClose: () => void;
-    payload: TemplateListType
-}
 
 const { Text } = Typography;
 
 const TemplateDrawer: React.FC<TemplateDrawerProps> = ({ open, onClose, payload }) => {
 
+    const navigate = useNavigate();
     const [template, setTemplate] = useState<TemplateType>(patchingFileInitialState);
     const { message, contextHolder } = useMessage();
     const { templateManager } = useTemplate();
@@ -45,6 +39,10 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({ open, onClose, payload 
         message.success("Sql copied!")
     }
 
+    const onUseTemplate = () => {
+        navigate(path.patchingGenerate, { state: { templateKey: payload?.key }})
+    }
+
     return (
         <>
             {contextHolder}
@@ -54,17 +52,19 @@ const TemplateDrawer: React.FC<TemplateDrawerProps> = ({ open, onClose, payload 
                 closable={true}
                 onClose={onClose}
                 open={open}
+                extra={(<Button onClick={onUseTemplate}>Use this Template</Button>)}
             >
                 <Descriptions
-                    column={1}
+                    column={2}
                     size='small'
-                    layout="vertical"
                     items={[
-                        { key: 1, label: "output file name", children: getTemplateOutputFileName(template)},
+                        { key: 1, label: "applicant", children: template.applier },
+                        { key: 2, label: "checker", children: template.checker },
+                        { key: 4, label: "table name", children: template.tableName },
+                        { key: 5, label: "action", children: template.action },
                     ]}
                 />
-                <SearchingSqlButton onCopy={() => onCopy(template.sql)} />
-                <pre>
+                <pre onClick={onCopy.bind(null, template.sql)} style={{ cursor: "pointer" }}>
                     <code className="language-sql">
                         {getTemplateOutputFileContent(template)}
                     </code>
@@ -85,10 +85,6 @@ const patchingFileInitialState: TemplateType = {
     description: '',
     extension: 'sql',
 };
-
-const getTemplateOutputFileName = (template: TemplateType) => {
-    return `00_${dayjs().format("YYYYMMDD")}${template.applier}_${dayjs().format("YYYYMMDD")}${template.applier}_${template.tableName}_${template.action}`;
-}
 
 const getTemplateOutputFileContent = (template: TemplateType) => {
     // description

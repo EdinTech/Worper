@@ -16,6 +16,7 @@ const SearchingSqlModifyPage: React.FC = () => {
 
     const [filePath, setFilePath] = useState("");
     const [fileName, setFileName] = useState("");
+    const [originFileName, setOriginFileName] = useState("");
     const [fileContent, setFileContent] = useState("");
     const [disabled, setDisabled] = useState(false);
 
@@ -31,6 +32,7 @@ const SearchingSqlModifyPage: React.FC = () => {
 
         setFilePath(payload);
         setFileName(payload.split('/').pop());
+        setOriginFileName(payload.split('/').pop());
         fs.readFile(payload).then(setFileContent);
     }, []);
 
@@ -77,7 +79,7 @@ const SearchingSqlModifyPage: React.FC = () => {
         }
 
         // rename file if changed file name
-        if(payload.split('/').pop() !== fileName) {
+        if(originFileName !== fileName) {
             const path = await setting.getSqlDirectoryPath();
             await fs.rename(filePath, `${path}/${fileName}`);
         }
@@ -96,6 +98,7 @@ const SearchingSqlModifyPage: React.FC = () => {
 
             {/* sql component */}
             <SearchingSqlModifyContent
+                originFileName={originFileName}
                 fileName={fileName}
                 setFileName={setFileName}
                 fileContent={fileContent}

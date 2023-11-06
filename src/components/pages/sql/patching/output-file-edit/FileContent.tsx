@@ -9,21 +9,16 @@ import { FileContentProps } from "../../../../util/interface/pages";
 
 const FileContent: React.FC<FileContentProps> = ({ fileState, setFileState, setDisabled }) => {
 
-    const [originFileName, setOriginFileName] = useState<string>();
     const [existsFileName, setExistsFileName] = useState(false);
     const { message, contextHolder } = useMessage();
     const { fs } = useFileSystem();
-
-    useEffect(() => {
-        setOriginFileName(fileState.name);
-    }, [])
 
     const checkExistsFileName = async () => {
 
         if (!fileState.name) {
             return;
         }
-        if (originFileName === fileState.name) {
+        if (fileState.originName === fileState.name) {
             return;
         }
 
